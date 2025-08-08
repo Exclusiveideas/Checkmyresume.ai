@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { ResumeAnalysis } from '@/types';
+import { ResumeAnalysisData } from '@/types';
 
 function validateEnvironment(): { isValid: boolean; error?: string } {
   if (!process.env.OPENAI_API_KEY) {
@@ -30,7 +30,7 @@ function getOpenAIClient(): OpenAI | null {
   }
 }
 
-export async function analyzeResume(resumeText: string): Promise<ResumeAnalysis> {
+export async function analyzeResume(resumeText: string): Promise<ResumeAnalysisData> {
   // Validate environment variables
   const envValidation = validateEnvironment();
   if (!envValidation.isValid) {
@@ -50,46 +50,15 @@ export async function analyzeResume(resumeText: string): Promise<ResumeAnalysis>
 
     await openai.beta.threads.messages.create(thread.id, {
       role: 'user',
-      content: `Please analyze this resume and provide a detailed assessment. Return the response as a JSON object with the following structure:
+      content: `Please analyze this resume and provide a comprehensive assessment using the structured format you're configured to return. Focus on:
 
-{
-  "skillsAnalysis": {
-    "technicalSkills": [],
-    "softSkills": [],
-    "skillsGaps": [],
-    "overallScore": 0-100
-  },
-  "experienceAnalysis": {
-    "yearsOfExperience": 0,
-    "careerLevel": "Entry|Mid|Senior|Executive",
-    "industryFit": "string",
-    "keyAchievements": []
-  },
-  "atsScore": {
-    "score": 0-100,
-    "maxScore": 100,
-    "improvements": [],
-    "keywordMatches": 0
-  },
-  "recommendations": {
-    "strengths": [],
-    "weaknesses": [],
-    "improvementSuggestions": [],
-    "nextSteps": []
-  },
-  "formatting": {
-    "readability": 0-100,
-    "structure": 0-100,
-    "consistency": 0-100,
-    "professionalAppearance": 0-100
-  },
-  "contactInfo": {
-    "hasEmail": boolean,
-    "hasPhone": boolean,
-    "hasLinkedIn": boolean,
-    "hasPortfolio": boolean
-  }
-}
+1. Overall scoring and ranking
+2. Detailed breakdown of all scoring categories
+3. ATS compliance analysis
+4. Keyword coverage assessment
+5. Professional formatting evaluation
+6. Job match likelihood
+7. Prioritized recommendations for improvement
 
 Resume content:
 ${resumeText}`,
@@ -129,7 +98,7 @@ ${resumeText}`,
             throw new Error('No JSON found in response');
           }
           
-          const analysis = JSON.parse(jsonMatch[0]) as ResumeAnalysis;
+          const analysis = JSON.parse(jsonMatch[0]) as ResumeAnalysisData;
           
           // await openai.beta.threads.del(thread.id); // Note: cleanup threads manually if needed
           

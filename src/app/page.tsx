@@ -5,13 +5,13 @@ import Header from '@/components/Header';
 import FileUploader from '@/components/FileUploader';
 import ResultsDisplay from '@/components/ResultsDisplay';
 import { LoadingState } from '@/components/LoadingSpinner';
-import { ResumeAnalysis, ApiResponse } from '@/types';
+import { ResumeAnalysisData, ApiResponse } from '@/types';
 import { useToast } from '@/hooks/useToast';
 
 export default function Home() {
   const [, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [analysis, setAnalysis] = useState<ResumeAnalysis | null>(null);
+  const [analysis, setAnalysis] = useState<ResumeAnalysisData | null>(null);
   const toast = useToast();
 
   const handleFileSelect = (file: File) => {
