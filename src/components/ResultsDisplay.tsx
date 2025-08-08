@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { 
-  Download, 
   RefreshCw, 
   Star, 
   TrendingUp, 
@@ -21,12 +20,11 @@ import {
   ChevronUp
 } from 'lucide-react';
 import { ResultsDisplayProps } from '@/types';
-import { cn, downloadAsJson } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 export default function ResultsDisplay({ 
   analysis, 
   onReset, 
-  onDownload, 
   className 
 }: ResultsDisplayProps) {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
@@ -38,9 +36,6 @@ export default function ResultsDisplay({
     }));
   };
 
-  const handleDownloadJson = () => {
-    downloadAsJson(analysis, 'resume-analysis');
-  };
 
   const ScoreCircle = ({ score, total = 10, label, color = "text-blue-600" }: { 
     score: number; 
@@ -199,13 +194,6 @@ export default function ResultsDisplay({
         </div>
         
         <div className="flex flex-wrap justify-center gap-4">
-          <button
-            onClick={handleDownloadJson}
-            className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-lg"
-          >
-            <Download className="w-4 h-4" />
-            <span>Download Results</span>
-          </button>
           <button
             onClick={onReset}
             className="inline-flex items-center space-x-2 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors shadow-lg"

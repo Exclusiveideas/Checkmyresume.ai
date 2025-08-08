@@ -81,21 +81,6 @@ export default function Home() {
     toast.info('Ready to analyze another resume!');
   };
 
-  const handleDownload = (format: 'json' | 'pdf') => {
-    if (format === 'json' && analysis) {
-      const dataStr = JSON.stringify(analysis, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-      
-      const exportFileDefaultName = 'resume-analysis.json';
-      
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
-      
-      toast.success('Analysis downloaded successfully!');
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900">
@@ -118,7 +103,6 @@ export default function Home() {
               <ResultsDisplay
                 analysis={analysis}
                 onReset={handleReset}
-                onDownload={handleDownload}
               />
             ) : (
               <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 space-y-8">

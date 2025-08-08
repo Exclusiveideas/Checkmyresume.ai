@@ -309,7 +309,6 @@ export interface FileUploaderProps extends ComponentProps {
 export interface ResultsDisplayProps extends ComponentProps {
   analysis: ResumeAnalysisData;
   onReset: () => void;
-  onDownload: (format: 'json' | 'pdf') => void;
 }
 
 export interface HeaderProps extends ComponentProps {
