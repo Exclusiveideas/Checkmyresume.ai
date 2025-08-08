@@ -77,25 +77,23 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
-      {/* Input Row */}
-      <div className="flex gap-4 items-center">
-        <div className="flex-1">
-          <input
-            type="email"
-            placeholder="Enter your email..."
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="minimal-input w-full"
-            disabled={isUploading}
-          />
-        </div>
+      {/* Main Form Container */}
+      <div className="form-container">
+        <input
+          type="email"
+          placeholder="Enter your email..."
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="integrated-input"
+          disabled={isUploading}
+        />
         
         <button
           onClick={handleUploadClick}
-          className="minimal-button flex items-center space-x-2"
+          className="inner-button"
           disabled={isUploading}
         >
-          <Upload className="w-5 h-5" />
+          <Upload className="w-4 h-4" />
           <span>Upload resume</span>
         </button>
         
@@ -122,7 +120,7 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
         <button
           onClick={handleScan}
           disabled={isUploading || !selectedFile || !email.trim() || !isValidEmail(email)}
-          className="scan-button"
+          className="standalone-button"
         >
           {isUploading ? 'Scanning...' : 'Scan'}
         </button>
