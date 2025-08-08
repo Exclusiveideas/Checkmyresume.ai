@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { analyzeResume } from '@/lib/openai';
 import { validateFile, generateErrorMessage } from '@/lib/utils';
 import { ApiResponse, ResumeAnalysisData } from '@/types';
+import { storeEmail, markAnalysisComplete } from '@/lib/supabase-admin';
 import fs from 'fs';
 import path from 'path';
 
@@ -37,13 +38,18 @@ function getRateLimit(ip: string): { allowed: boolean; remaining: number; resetT
   };
 }
 
-async function parseFormData(req: NextRequest): Promise<{ file: File }> {
+async function parseFormData(req: NextRequest): Promise<{ file: File; email: string }> {
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File;
+    const email = formData.get('email') as string;
     
     if (!file) {
       throw new Error('No file provided');
+    }
+    
+    if (!email || !email.trim()) {
+      throw new Error('Email address is required');
     }
     
     if (file.size === 0) {
@@ -55,7 +61,7 @@ async function parseFormData(req: NextRequest): Promise<{ file: File }> {
       throw new Error(`File size exceeds maximum limit of ${maxSizeMB}MB`);
     }
     
-    return { file };
+    return { file, email: email.trim() };
   } catch (error) {
     if (error instanceof Error) {
       throw error;
@@ -161,7 +167,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let parsedData: { file: File };
+    let parsedData: { file: File; email: string };
     try {
       parsedData = await parseFormData(req);
     } catch (parseError) {
@@ -171,7 +177,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { file } = parsedData;
+    const { file, email } = parsedData;
     
     // Validate the file using the Web API File object directly
     const validation = validateFile(file, MAX_FILE_SIZE);
@@ -203,6 +209,13 @@ export async function POST(req: NextRequest) {
         },
         { status: 400 }
       );
+    }
+
+    // Store email in database (non-blocking - don't fail if this doesn't work)
+    try {
+      await storeEmail(email, file.name);
+    } catch (emailError) {
+      console.warn('Failed to store email, continuing with analysis:', emailError);
     }
 
     let analysis;
@@ -258,6 +271,13 @@ export async function POST(req: NextRequest) {
           );
         }
       }
+
+    // Mark analysis as complete (non-blocking)
+    try {
+      await markAnalysisComplete(email);
+    } catch (completeError) {
+      console.warn('Failed to mark analysis as complete:', completeError);
+    }
 
     return NextResponse.json<ApiResponse>(
       { 

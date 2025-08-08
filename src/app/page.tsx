@@ -31,6 +31,7 @@ export default function Home() {
     try {
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('email', userEmail);
 
       const response = await fetch('/api/scan-resume', {
         method: 'POST',
