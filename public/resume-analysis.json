@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2024-06-19T20:16:40Z",
+  "inputs": {
+    "resume_text_hash": null,
+    "file_format": "docx",
+    "target_title": null,
+    "job_descriptions": [],
+    "keyword_source": "inferred",
+    "industry_keywords_considered": [],
+    "inference_notes": "Resume text could not be extracted due to corruption or unreadable content. No target job title or job descriptions were provided. No keywords could be inferred or matched."
+  },
+  "scores": {
+    "keyword_coverage": 0,
+    "ats_compliance": 8,
+    "job_match": 0,
+    "organization_structure": 0,
+    "ats_ranking": 0,
+    "readability": 0,
+    "ghosted_risk_subscore_0_to_10": 0
+  },
+  "breakdown": {
+    "keyword_coverage": {
+      "score": 0,
+      "keywords_found_count": 0,
+      "keywords_found": [],
+      "missing_keywords": [],
+      "hackedcv_auto_10_applied": false,
+      "rationale": "Resume content is unreadable or corrupted, so no keywords could be detected or evaluated.",
+      "evidence": []
+    },
+    "organization_structure": {
+      "score": 0,
+      "checks": {
+        "summary_present": false,
+        "bullet_alignment_consistent": false,
+        "headers_bold_clean": false,
+        "spacing_consistent": false,
+        "reverse_chronological": false
+      },
+      "rationale": "Document provided is not parsable as resume content. No structural elements could be detected.",
+      "evidence": []
+    },
+    "ats_compliance": {
+      "score": 8,
+      "violations_count": 1,
+      "violations": [
+        "text_boxes_or_tables_detected"
+      ],
+      "backend_keyword_injection_detected": false,
+      "rationale": "The DOCX file format is acceptable, but the content appears to be corrupt or full of file artifacts, possibly indicating table or non-plain layouts, so a penalty is applied for possible non-text elements."
+    },
+    "readability": {
+      "score": 0,
+      "avg_bullet_line_length_lt_2": null,
+      "metrics_examples_count": 0,
+      "action_verbs_examples_count": 0,
+      "buzzword_stuffing_detected": false,
+      "rationale": "No readable content, so no bullet structure or readability metrics can be computed.",
+      "evidence": []
+    },
+    "job_match": {
+      "score": 0,
+      "alignment_factors": {
+        "target_role_in_summary_or_title": false,
+        "jd_keyword_alignment": false,
+        "industry_match_in_history": false,
+        "transferable_skills": false
+      },
+      "rationale": "Resume content is unreadable. No match assessment with target role, industry, or transferable skills is possible.",
+      "evidence": []
+    },
+    "ats_ranking": {
+      "score": 0,
+      "label": "Low",
+      "rationale": "No keywords or relevant terms detectable in top, title, or summary positions due to unreadable file."
+    },
+    "ghosted_risk": {
+      "percent": 100,
+      "components": {
+        "strong_summary": false,
+        "job_title_top_third": false,
+        "formatting_metrics_visible": false,
+        "high_keyword_density": false
+      },
+      "rationale": "All ghosted risk deductions are unavailable because the relevant features cannot be detected; defaults applied for unreadable/corrupt document."
+    }
+  },
+  "flags": {
+    "cold_traffic_floor_applied": false,
+    "hackedcv_detected": false
+  },
+  "overall": {
+    "score_0_to_100": 4.6,
+    "weights_applied": {
+      "keyword_coverage": 0.2,
+      "ats_compliance": 0.2,
+      "job_match": 0.15,
+      "organization_structure": 0.15,
+      "ats_ranking": 0.15,
+      "readability": 0.1,
+      "ghosted_risk": 0.05
+    },
+    "cold_traffic_cap_applied": false,
+    "final_label": "Low",
+    "rationale": "Resume file is not readable and appears to be corrupted or extracted incorrectly. Scoring defaults to minimum for all categories except slight credit for file format."
+  },
+  "recommendations": [
+    {
+      "title": "Submit a readable version of your resume",
+      "description": "Ensure your resume is in a valid PDF, DOCX, or TXT format, and the content is extractable and human-readable. Avoid table-based or heavily formatted templates that obscure plain text extraction.",
+      "priority": "high"
+    },
+    {
+      "title": "Double-check file encoding and conversion",
+      "description": "If you converted your resume from another format, ensure no corruption or encoding errors occurred. Open the file in multiple programs to verify its content displays correctly.",
+      "priority": "high"
+    },
+    {
+      "title": "Use standard ATS-friendly formatting",
+      "description": "Rebuild your resume using clear section headings (e.g., 'Summary,' 'Experience'), bullet points, and consistent layout. Avoid columns, text boxes, or graphical elements.",
+      "priority": "high"
+    }
+  ],
+  "what_this_means": "Your resume could not be analyzed due to file corruption or unreadable extraction. No substantive review is possible. Please resubmit a clear, plain-text or standard formatted resume for assessment.",
+  "debug": {
+    "per_rule_points": {
+      "Placeholder1": "No actual content available for granular scoring breakdown. No keywords, sections, or metrics found due to file unreadability."
+    },
+    "notes": "Resume file appears to be a binary extraction, not human-readable or processable as text. Categories scored at lowest valid value except for file format limitations."
+  }
+}

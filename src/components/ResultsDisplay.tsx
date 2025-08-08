@@ -106,7 +106,7 @@ export default function ResultsDisplay({
         )}
       </button>
       {expandedSections[sectionKey] && (
-        <div className="p-6">
+        <div className="p-6 animate-fadeIn">
           {children}
         </div>
       )}
@@ -198,7 +198,7 @@ export default function ResultsDisplay({
             onClick={onReset}
             className="inline-flex items-center space-x-2 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors shadow-lg"
           >
-            <RefreshCw className="w-4 h-4" />
+            <RefreshCw className="w-5 h-5" />
             <span>Analyze Another</span>
           </button>
         </div>
@@ -587,6 +587,28 @@ export default function ResultsDisplay({
               </div>
             ))
           }
+        </div>
+      </div>
+
+      {/* Call to Action */}
+      <div className="text-center py-12">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Ready to Land Your Dream Job?
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 text-lg">
+            Get personalized resume optimization and job search strategies that actually work.
+          </p>
+          <button
+            onClick={() => {
+              // Placeholder for now - can be updated with actual functionality
+              console.log('CTA button clicked');
+              alert('Feature coming soon! 🚀');
+            }}
+            className="cta-button"
+          >
+            Want to stop getting ignored? Click here
+          </button>
         </div>
       </div>
     </div>

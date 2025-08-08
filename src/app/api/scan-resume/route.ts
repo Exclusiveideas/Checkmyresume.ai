@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { analyzeResume } from '@/lib/openai';
 import { validateFile, generateErrorMessage } from '@/lib/utils';
-import { ApiResponse } from '@/types';
+import { ApiResponse, ResumeAnalysisData } from '@/types';
+import fs from 'fs';
+import path from 'path';
 
 export const runtime = 'nodejs';
 
@@ -59,6 +61,17 @@ async function parseFormData(req: NextRequest): Promise<{ file: File }> {
       throw error;
     }
     throw new Error('Failed to parse form data');
+  }
+}
+
+function getMockResponse(): ResumeAnalysisData {
+  try {
+    const mockFilePath = path.join(process.cwd(), 'public', 'resume-analysis.json');
+    const mockData = fs.readFileSync(mockFilePath, 'utf-8');
+    return JSON.parse(mockData);
+  } catch (error) {
+    console.error('Error loading mock response:', error);
+    throw new Error('Failed to load mock response data');
   }
 }
 
@@ -193,38 +206,58 @@ export async function POST(req: NextRequest) {
     }
 
     let analysis;
-    try {
-      analysis = await analyzeResume(resumeText);
-    } catch (aiError) {
-      console.error('OpenAI analysis error:', aiError);
-      
-      // Check if this is a configuration error
-      const errorMessage = aiError instanceof Error ? aiError.message : 'Unknown error';
-      let statusCode = 500;
-      let userMessage = 'Failed to analyze resume. Please try again later.';
-
-      if (errorMessage.includes('API key') || errorMessage.includes('OPENAI_API_KEY')) {
-        statusCode = 503;
-        userMessage = 'Service configuration issue: OpenAI API key is missing or invalid. Please contact support or check your environment configuration.';
-      } else if (errorMessage.includes('Assistant ID') || errorMessage.includes('OPENAI_ASSISTANT_ID')) {
-        statusCode = 503;
-        userMessage = 'Service configuration issue: OpenAI Assistant is not properly configured. Please contact support or check your environment configuration.';
-      } else if (errorMessage.includes('rate limit') || errorMessage.includes('quota')) {
-        statusCode = 429;
-        userMessage = 'Service is currently experiencing high demand. Please try again in a few minutes.';
-      } else if (errorMessage.includes('network') || errorMessage.includes('timeout')) {
-        statusCode = 503;
-        userMessage = 'Network connectivity issue. Please check your internet connection and try again.';
+    
+    // Check if we're in development mode
+    if (process.env.DEVELOPMENT_MODE === 'true') {
+      console.log('📝 Development mode: Using mock response');
+      try {
+        analysis = getMockResponse();
+        // Add a small delay to simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      } catch (mockError) {
+        console.error('Mock response error:', mockError);
+        return NextResponse.json<ApiResponse>(
+          { 
+            success: false, 
+            error: 'Failed to load development test data. Please check if resume-analysis.json exists in the public folder.' 
+          },
+          { status: 500 }
+        );
       }
+    } else {
+        try {
+          analysis = await analyzeResume(resumeText);
+        } catch (aiError) {
+          console.error('OpenAI analysis error:', aiError);
+          
+          // Check if this is a configuration error
+          const errorMessage = aiError instanceof Error ? aiError.message : 'Unknown error';
+          let statusCode = 500;
+          let userMessage = 'Failed to analyze resume. Please try again later.';
 
-      return NextResponse.json<ApiResponse>(
-        { 
-          success: false, 
-          error: userMessage
-        },
-        { status: statusCode }
-      );
-    }
+          if (errorMessage.includes('API key') || errorMessage.includes('OPENAI_API_KEY')) {
+            statusCode = 503;
+            userMessage = 'Service configuration issue: OpenAI API key is missing or invalid. Please contact support or check your environment configuration.';
+          } else if (errorMessage.includes('Assistant ID') || errorMessage.includes('OPENAI_ASSISTANT_ID')) {
+            statusCode = 503;
+            userMessage = 'Service configuration issue: OpenAI Assistant is not properly configured. Please contact support or check your environment configuration.';
+          } else if (errorMessage.includes('rate limit') || errorMessage.includes('quota')) {
+            statusCode = 429;
+            userMessage = 'Service is currently experiencing high demand. Please try again in a few minutes.';
+          } else if (errorMessage.includes('network') || errorMessage.includes('timeout')) {
+            statusCode = 503;
+            userMessage = 'Network connectivity issue. Please check your internet connection and try again.';
+          }
+
+          return NextResponse.json<ApiResponse>(
+            { 
+              success: false, 
+              error: userMessage
+            },
+            { status: statusCode }
+          );
+        }
+      }
 
     return NextResponse.json<ApiResponse>(
       { 
