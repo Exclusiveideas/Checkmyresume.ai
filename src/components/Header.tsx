@@ -1,5 +1,5 @@
-import { HeaderProps } from '@/types';
 import { cn } from '@/lib/utils';
+import { HeaderProps } from '@/types';
 
 export default function Header({ title, className, children }: HeaderProps) {
   return (

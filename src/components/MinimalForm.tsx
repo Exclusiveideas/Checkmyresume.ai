@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Upload } from 'lucide-react';
+import LiquidGlass from '@/components/LiquidGlass';
 import { useToast } from '@/hooks/useToast';
-import { validateFile, isValidEmail } from '@/lib/utils';
+import { isValidEmail, validateFile } from '@/lib/utils';
+import { FileUp } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import './minimalForm.css';
 
 interface MinimalFormProps {
   onFileSelect: (file: File, email: string) => void;
@@ -29,7 +31,7 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
     const file = event.target.files?.[0];
     if (file) {
       const validation = validateFile(file, maxSize);
-      
+
       if (!validation.isValid) {
         toast.error(validation.errors.join(', '));
         return;
@@ -37,7 +39,7 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
 
       setSelectedFile(file);
       toast.success(`${file.name} selected successfully!`);
-      
+
       // Only notify parent if we have valid email, otherwise wait for scan
       if (email.trim() && isValidEmail(email)) {
         onFileSelect(file, email);
@@ -78,25 +80,25 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       {/* Main Form Container */}
-      <div className="form-container">
+      <div className="input-container" style={{ position: 'relative' }}>
         <input
           type="email"
           placeholder="Enter your email..."
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="integrated-input"
+          className="email-input"
           disabled={isUploading}
         />
-        
+
         <button
           onClick={handleUploadClick}
-          className="inner-button"
+          className="upload-button"
           disabled={isUploading}
         >
-          <Upload className="w-4 h-4" />
+          <FileUp className="w-5 h-5" />
           <span>Upload resume</span>
         </button>
-        
+
         <input
           ref={fileInputRef}
           type="file"
@@ -105,6 +107,7 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
           className="hidden"
         />
       </div>
+
 
       {/* Selected File Indicator */}
       {selectedFile && (
@@ -117,13 +120,21 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
 
       {/* Scan Button */}
       <div className="text-center">
+        <LiquidGlass 
+          className="dock-glass"
+          padding="0rem"
+          borderRadius="2.5rem"
+          hoverPadding="0.2rem"
+          hoverBorderRadius="2.5rem"
+        >
         <button
           onClick={handleScan}
           disabled={isUploading || !selectedFile || !email.trim() || !isValidEmail(email)}
-          className="standalone-button"
+          className="scan-button"
         >
           {isUploading ? 'Scanning...' : 'Scan'}
         </button>
+        </LiquidGlass>
       </div>
     </div>
   );

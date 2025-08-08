@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
 import Header from '@/components/Header';
+import LiquidGlassFilter from '@/components/LiquidGlassFilter';
+import { LoadingState } from '@/components/LoadingSpinner';
 import MinimalForm from '@/components/MinimalForm';
 import ResultsDisplay from '@/components/ResultsDisplay';
-import { LoadingState } from '@/components/LoadingSpinner';
-import { ResumeAnalysisData, ApiResponse } from '@/types';
 import { useToast } from '@/hooks/useToast';
+import { ApiResponse, ResumeAnalysisData } from '@/types';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -14,6 +15,21 @@ export default function Home() {
   const [isUploading, setIsUploading] = useState(false);
   const [analysis, setAnalysis] = useState<ResumeAnalysisData | null>(null);
   const toast = useToast();
+  const [particles, setParticles] = useState<unknown>([]);
+
+  // Initialize particles
+  useEffect(() => {
+    const particleArray = [];
+    for (let i = 0; i < 250; i++) {
+      particleArray.push({
+        id: i,
+        left: Math.random() * 100,
+        animationDelay: Math.random() * 10,
+        animationDuration: 10 + Math.random() * 10
+      });
+    }
+    setParticles(particleArray);
+  }, []);
 
   const handleFileSelect = (file: File, email: string) => {
     setSelectedFile(file);
@@ -24,7 +40,7 @@ export default function Home() {
   const handleUpload = async (file: File) => {
     setIsUploading(true);
     toast.dismiss(); // Clear any previous toasts
-    
+
     // Show loading toast
     const loadingToastId = toast.loading('Analyzing your resume with AI...');
 
@@ -48,7 +64,7 @@ export default function Home() {
         // Dismiss loading toast and show success
         toast.dismiss(loadingToastId);
         toast.success('Resume analysis completed successfully! 🎉');
-        
+
         setAnalysis(result.data);
         setSelectedFile(null);
       } else {
@@ -56,12 +72,12 @@ export default function Home() {
       }
     } catch (err) {
       console.error('Upload error:', err);
-      
+
       // Dismiss loading toast and show error
       toast.dismiss(loadingToastId);
-      
+
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
-      
+
       // Show different error types with appropriate styling
       if (errorMessage.includes('configuration') || errorMessage.includes('API key') || errorMessage.includes('Assistant')) {
         toast.error(errorMessage, { duration: 8000 });
@@ -87,7 +103,21 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-screen dark-grid-bg">
+    <div className="h-screen dark-grid-bg">
+      <LiquidGlassFilter />
+      <div className="particles-container">
+        {particles?.map(particle => (
+          <div
+            key={particle.id}
+            className="particle"
+            style={{
+              left: `${particle.left}%`,
+              animationDelay: `${particle.animationDelay}s`,
+              animationDuration: `${particle.animationDuration}s`
+            }}
+          />
+        ))}
+      </div>
       <div className="container mx-auto px-4 py-8 flex flex-col justify-center min-h-screen">
         {isUploading ? (
           <div className="flex items-center justify-center">
@@ -104,7 +134,7 @@ export default function Home() {
           <div className="text-center space-y-16">
             {/* Header */}
             <Header title="AI Resume Scanner" />
-            
+
             {/* Minimal Form */}
             <MinimalForm
               onFileSelect={handleFileSelect}

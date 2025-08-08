@@ -1,26 +1,23 @@
 'use client';
 
-import React, { useState } from 'react';
-import { 
-  RefreshCw, 
-  Star, 
-  TrendingUp, 
-  Award, 
-  Target,
-  CheckCircle,
-  XCircle,
-  Key,
-  FileText,
-  Bot,
-  Eye,
-  Users,
+import LiquidGlass from '@/components/LiquidGlass';
+import { cn } from '@/lib/utils';
+import { ResultsDisplayProps } from '@/types';
+import {
   AlertTriangle,
   BarChart3,
+  Bot,
+  CheckCircle,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Eye,
+  FileText,
+  Key,
+  RefreshCw,
+  Target,
+  XCircle
 } from 'lucide-react';
-import { ResultsDisplayProps } from '@/types';
-import { cn } from '@/lib/utils';
+import React, { useState } from 'react';
 
 export default function ResultsDisplay({ 
   analysis, 
@@ -599,16 +596,22 @@ export default function ResultsDisplay({
           <p className="text-gray-600 dark:text-gray-400 text-lg">
             Get personalized resume optimization and job search strategies that actually work.
           </p>
+        <LiquidGlass 
+          className="dock-glass"
+          padding="0rem"
+          borderRadius="2.5rem"
+          hoverPadding="0.2rem"
+          hoverBorderRadius="2.5rem"
+        >
           <button
             onClick={() => {
-              // Placeholder for now - can be updated with actual functionality
-              console.log('CTA button clicked');
-              alert('Feature coming soon! 🚀');
+              alert('Landing Page link coming soon');
             }}
             className="cta-button"
           >
             Want to stop getting ignored? Click here
           </button>
+          </LiquidGlass>
         </div>
       </div>
     </div>
