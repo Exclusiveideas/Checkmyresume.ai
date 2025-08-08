@@ -1,5 +1,6 @@
 import { LoadingSpinnerProps } from '@/types';
 import { cn } from '@/lib/utils';
+import { useProgressSimulation } from '@/hooks/useProgressSimulation';
 
 export default function LoadingSpinner({ 
   size = 'md', 
@@ -29,7 +30,9 @@ export default function LoadingSpinner({
   );
 }
 
-export function LoadingState({ message = "Analyzing your resume..." }: { message?: string }) {
+export function LoadingState({ message: fallbackMessage = "Analyzing your resume..." }: { message?: string }) {
+  const { progress, message, isComplete } = useProgressSimulation();
+
   return (
     <div className="flex flex-col items-center justify-center space-y-6 p-8">
       <div className="relative">
@@ -43,11 +46,17 @@ export function LoadingState({ message = "Analyzing your resume..." }: { message
           {message}
         </p>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          This may take a few seconds...
+          {isComplete ? "Almost done..." : "This may take a few seconds..."}
         </p>
       </div>
-      <div className="w-64 bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+      <div className="w-64 bg-gray-200 rounded-full h-2 dark:bg-gray-700 overflow-hidden">
+        <div 
+          className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300 ease-out"
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+      <div className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+        {progress}%
       </div>
     </div>
   );
