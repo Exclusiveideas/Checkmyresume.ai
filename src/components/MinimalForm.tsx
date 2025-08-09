@@ -81,23 +81,30 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
     <div className="max-w-2xl mx-auto space-y-8">
       {/* Main Form Container */}
       <div className="input-container" style={{ position: 'relative' }}>
-        <input
-          type="email"
-          placeholder="Enter your email..."
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="email-input"
-          disabled={isUploading}
-        />
-
-        <button
-          onClick={handleUploadClick}
-          className="upload-button"
-          disabled={isUploading}
+        <LiquidGlass
+          className="dock-glass"
+          padding="0rem"
+          borderRadius="0"
+          hoverPadding="0"
+          hoverBorderRadius="0"
+          noTint={true}
         >
-          <FileUp className="w-5 h-5" />
-          <span>Upload resume</span>
-        </button>
+          <input
+            type="email"
+            placeholder="Enter your email..."
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="email-input"
+            disabled={isUploading}
+          />
+          <button
+            onClick={handleUploadClick}
+            className="upload-button"
+            disabled={isUploading}
+          >
+            <FileUp className="w-5 h-5" />
+            <span>Upload resume</span>
+          </button></LiquidGlass>
 
         <input
           ref={fileInputRef}
@@ -107,7 +114,6 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
           className="hidden"
         />
       </div>
-
 
       {/* Selected File Indicator */}
       {selectedFile && (
@@ -120,20 +126,21 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
 
       {/* Scan Button */}
       <div className="text-center">
-        <LiquidGlass 
+        <LiquidGlass
           className="dock-glass"
           padding="0rem"
           borderRadius="2.5rem"
           hoverPadding="0.2rem"
           hoverBorderRadius="2.5rem"
+          noTint={false}
         >
-        <button
-          onClick={handleScan}
-          disabled={isUploading || !selectedFile || !email.trim() || !isValidEmail(email)}
-          className="scan-button"
-        >
-          {isUploading ? 'Scanning...' : 'Scan'}
-        </button>
+          <button
+            onClick={handleScan}
+            disabled={isUploading || !selectedFile || !email.trim() || !isValidEmail(email)}
+            className="scan-button"
+          >
+            {isUploading ? 'Scanning...' : 'Scan'}
+          </button>
         </LiquidGlass>
       </div>
     </div>

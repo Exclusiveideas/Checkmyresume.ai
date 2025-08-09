@@ -1,18 +1,17 @@
-const LiquidGlass = ({ 
-  children, 
-  className = '', 
+const LiquidGlass = ({
+  children,
+  className = '',
   padding = '1rem',
   borderRadius = '2rem',
   hoverPadding,
   hoverBorderRadius,
-  // onClick,
   style = {},
+  noTint
 }) => {
   return (
     <>
-      <div 
+      <div
         className={`liquid-glass-wrapper ${className}`}
-        // onClick={onClick}
         style={{
           '--padding': padding,
           '--border-radius': borderRadius,
@@ -22,23 +21,24 @@ const LiquidGlass = ({
         }}
       >
         <div className="liquid-glass-effect" />
-        <div className="liquid-glass-tint" />
+        <div className="liquid-glass-tint" style={{ opacity: noTint ? 0 : 1 }} />
         <div className="liquid-glass-shine" />
         <div className="liquid-glass-content">
           {children}
         </div>
       </div>
-      
+
       <style jsx>{`
         .liquid-glass-wrapper {
           position: relative;
           display: inline-flex;
           overflow: hidden;
-          cursor: pointer;
           padding: var(--padding);
           border-radius: var(--border-radius);
           box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
           transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+          flex: 1;
+          width: 100%
         }
         
         .liquid-glass-wrapper:hover {
@@ -60,7 +60,7 @@ const LiquidGlass = ({
           z-index: 1;
           position: absolute;
           inset: 0;
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(255, 255, 255, 0.1);
         }
         
         .liquid-glass-shine {
@@ -68,13 +68,13 @@ const LiquidGlass = ({
           inset: 0;
           z-index: 2;
           overflow: hidden;
-          // box-shadow: inset 2px 2px 1px 0 rgba(255, 255, 255, 0.5),
-          //   inset -1px -1px 1px 1px rgba(255, 255, 255, 0.5);
         }
         
         .liquid-glass-content {
           position: relative;
           z-index: 3;
+          display: flex;
+          width: 100%;
         }
       `}</style>
     </>

@@ -156,6 +156,7 @@ body {
   position: relative;
   overflow: hidden;
   transform: translateY(0);
+  width: 100%;
 }
 
 .cta-button::before {

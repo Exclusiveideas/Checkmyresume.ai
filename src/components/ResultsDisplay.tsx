@@ -19,10 +19,10 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 
-export default function ResultsDisplay({ 
-  analysis, 
-  onReset, 
-  className 
+export default function ResultsDisplay({
+  analysis,
+  onReset,
+  className
 }: ResultsDisplayProps) {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
 
@@ -34,11 +34,11 @@ export default function ResultsDisplay({
   };
 
 
-  const ScoreCircle = ({ score, total = 10, label, color = "text-blue-600" }: { 
-    score: number; 
+  const ScoreCircle = ({ score, total = 10, label, color = "text-blue-600" }: {
+    score: number;
     total?: number;
-    label: string; 
-    color?: string; 
+    label: string;
+    color?: string;
   }) => {
     const percentage = (score / total) * 100;
     return (
@@ -76,37 +76,48 @@ export default function ResultsDisplay({
     );
   };
 
-  const ExpandableSection = ({ 
-    title, 
-    icon: Icon, 
-    sectionKey, 
-    children 
-  }: { 
-    title: string; 
-    icon: React.ComponentType<{ className?: string }>; 
+  const ExpandableSection = ({
+    title,
+    icon: Icon,
+    sectionKey,
+    children
+  }: {
+    title: string;
+    icon: React.ComponentType<{ className?: string }>;
     sectionKey: string;
     children: React.ReactNode;
   }) => (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-      <button
-        onClick={() => toggleSection(sectionKey)}
-        className="w-full px-6 py-4 flex items-center justify-between bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-500 transition-colors"
+    <div className="rounded-[1.2rem] shadow-lg overflow-hidden">
+      <LiquidGlass
+        className="dock-glass"
+        padding="0rem"
+        borderRadius="1.2rem"
+        hoverPadding="0rem"
+        hoverBorderRadius="1.2rem"
+        noTint={false}
       >
-        <div className="flex items-center space-x-3">
-          <Icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</span>
+        <div className="flex-1 dark:bg-gray-800/50 rounded-[1.2rem] overflow-hidden">
+          <button
+            onClick={() => toggleSection(sectionKey)}
+            className="w-full px-6 py-4 flex items-center justify-between bg-gradient-to-r from-gray-50/50 to-gray-100/50 dark:from-gray-700/50 dark:to-gray-600/50 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-500 transition-colors"
+          >
+            <div className="flex items-center space-x-3">
+              <Icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</span>
+            </div>
+            {expandedSections[sectionKey] ? (
+              <ChevronUp className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            )}
+          </button>
+          {expandedSections[sectionKey] && (
+            <div className="p-6 animate-fadeIn">
+              {children}
+            </div>
+          )}
         </div>
-        {expandedSections[sectionKey] ? (
-          <ChevronUp className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-        ) : (
-          <ChevronDown className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-        )}
-      </button>
-      {expandedSections[sectionKey] && (
-        <div className="p-6 animate-fadeIn">
-          {children}
-        </div>
-      )}
+      </LiquidGlass>
     </div>
   );
 
@@ -131,90 +142,112 @@ export default function ResultsDisplay({
   return (
     <div className={cn("w-full max-w-7xl mx-auto space-y-8", className)}>
       {/* Header */}
-      <div className="text-center space-y-6 p-8 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-3xl border border-green-200 dark:border-green-800">
-        <div className="flex items-center justify-center space-x-2">
-          <CheckCircle className="w-8 h-8 text-green-600" />
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Resume Analysis Complete
-          </h2>
-        </div>
-        
-        {/* Overall Score - Large and Prominent */}
-        <div className="flex flex-col items-center space-y-4">
-          <div className="relative w-32 h-32">
-            <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
-              <circle
-                cx="50"
-                cy="50"
-                r="40"
-                stroke="currentColor"
-                strokeWidth="6"
-                fill="transparent"
-                className="text-gray-200 dark:text-gray-700"
-              />
-              <circle
-                cx="50"
-                cy="50"
-                r="40"
-                stroke="currentColor"
-                strokeWidth="6"
-                fill="transparent"
-                strokeDasharray={`${2.51 * analysis.overall.score_0_to_100} 251.2`}
-                className={cn(
-                  "transition-all duration-1000 ease-out",
-                  analysis.overall.score_0_to_100 >= 70 ? "text-green-500" :
-                  analysis.overall.score_0_to_100 >= 40 ? "text-yellow-500" : "text-red-500"
+      <div className="text-center rounded-[1.6rem] border border-green-200 dark:border-green-800">
+        <LiquidGlass
+          className="dock-glass"
+          padding="0rem"
+          borderRadius="1.6rem"
+          hoverPadding="0rem"
+          hoverBorderRadius="1.6rem"
+          noTint={true}
+        >
+          <div className="text-center w-[100%] space-y-6 p-8 rounded-3xl dark:bg-green-800/5 ">
+            <div className="flex items-center justify-center space-x-2">
+              <CheckCircle className="w-8 h-8 text-green-600" />
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                Resume Analysis Complete
+              </h2>
+            </div>
+
+            {/* Overall Score - Large and Prominent */}
+            <div className="flex flex-col items-center space-y-4">
+              <div className="relative w-32 h-32">
+                <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    stroke="currentColor"
+                    strokeWidth="6"
+                    fill="transparent"
+                    className="text-gray-200 dark:text-gray-700"
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    stroke="currentColor"
+                    strokeWidth="6"
+                    fill="transparent"
+                    strokeDasharray={`${2.51 * analysis.overall.score_0_to_100} 251.2`}
+                    className={cn(
+                      "transition-all duration-1000 ease-out",
+                      analysis.overall.score_0_to_100 >= 70 ? "text-green-500" :
+                        analysis.overall.score_0_to_100 >= 40 ? "text-yellow-500" : "text-red-500"
+                    )}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                    {Math.round(analysis.overall.score_0_to_100)}
+                  </span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">/ 100</span>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <div className={cn(
+                  "inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold",
+                  getLabelColor(analysis.overall.final_label)
+                )}>
+                  {analysis.overall.final_label} Performance
+                </div>
+                {analysis.overall.rationale && (
+                  <p className="text-gray-600 dark:text-gray-400 mt-2 max-w-2xl">
+                    {analysis.overall.rationale}
+                  </p>
                 )}
-              />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                {Math.round(analysis.overall.score_0_to_100)}
-              </span>
-              <span className="text-sm text-gray-600 dark:text-gray-400">/ 100</span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-4">
+              <button
+                onClick={onReset}
+                className="inline-flex items-center space-x-2 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors shadow-lg"
+              >
+                <RefreshCw className="w-5 h-5" />
+                <span>Analyze Another</span>
+              </button>
             </div>
           </div>
-          
-          <div className="text-center">
-            <div className={cn(
-              "inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold",
-              getLabelColor(analysis.overall.final_label)
-            )}>
-              {analysis.overall.final_label} Performance
-            </div>
-            {analysis.overall.rationale && (
-              <p className="text-gray-600 dark:text-gray-400 mt-2 max-w-2xl">
-                {analysis.overall.rationale}
-              </p>
-            )}
-          </div>
-        </div>
-        
-        <div className="flex flex-wrap justify-center gap-4">
-          <button
-            onClick={onReset}
-            className="inline-flex items-center space-x-2 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors shadow-lg"
-          >
-            <RefreshCw className="w-5 h-5" />
-            <span>Analyze Another</span>
-          </button>
-        </div>
+        </LiquidGlass>
       </div>
 
       {/* What This Means */}
       {analysis.what_this_means && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6">
-          <div className="flex items-start space-x-3">
-            <Eye className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
-            <div>
-              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                What This Means
-              </h3>
-              <p className="text-blue-800 dark:text-blue-200 leading-relaxed">
-                {analysis.what_this_means}
-              </p>
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-[1.6rem]">
+          <LiquidGlass
+            className="dock-glass"
+            padding="0rem"
+            borderRadius="1.6rem"
+            hoverPadding="0rem"
+            hoverBorderRadius="1.6rem"
+            noTint={false}
+          >
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-[1.6rem] p-6">
+              <div className="flex items-start space-x-3">
+                <Eye className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                    What This Means
+                  </h3>
+                  <p className="text-blue-800 dark:text-blue-200 leading-relaxed">
+                    {analysis.what_this_means}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
+          </LiquidGlass>
         </div>
       )}
 
@@ -225,7 +258,7 @@ export default function ResultsDisplay({
         </h3>
         <div className="space-y-6">
           {/* Keyword Coverage */}
-          <ExpandableSection 
+          <ExpandableSection
             title={`🔑 Keyword Coverage (${analysis.breakdown.keyword_coverage.score}/10)`}
             icon={Key}
             sectionKey="keyword_coverage"
@@ -233,7 +266,7 @@ export default function ResultsDisplay({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-medium text-gray-700 dark:text-gray-300">Score</span>
-                <ScoreCircle 
+                <ScoreCircle
                   score={analysis.breakdown.keyword_coverage.score}
                   label="Keywords"
                   color="text-blue-600"
@@ -276,7 +309,7 @@ export default function ResultsDisplay({
           </ExpandableSection>
 
           {/* Organization Structure */}
-          <ExpandableSection 
+          <ExpandableSection
             title={`📐 Organization & Structure (${analysis.breakdown.organization_structure.score}/10)`}
             icon={FileText}
             sectionKey="organization_structure"
@@ -284,7 +317,7 @@ export default function ResultsDisplay({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-medium text-gray-700 dark:text-gray-300">Score</span>
-                <ScoreCircle 
+                <ScoreCircle
                   score={analysis.breakdown.organization_structure.score}
                   label="Structure"
                   color="text-purple-600"
@@ -315,7 +348,7 @@ export default function ResultsDisplay({
           </ExpandableSection>
 
           {/* ATS Compliance */}
-          <ExpandableSection 
+          <ExpandableSection
             title={`🛡️ ATS Compliance (${analysis.breakdown.ats_compliance.score}/10)`}
             icon={Bot}
             sectionKey="ats_compliance"
@@ -323,7 +356,7 @@ export default function ResultsDisplay({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-medium text-gray-700 dark:text-gray-300">Score</span>
-                <ScoreCircle 
+                <ScoreCircle
                   score={analysis.breakdown.ats_compliance.score}
                   label="ATS Ready"
                   color="text-green-600"
@@ -339,11 +372,10 @@ export default function ResultsDisplay({
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Violations Found</span>
-                  <span className={`px-2 py-1 rounded text-sm font-semibold ${
-                    analysis.breakdown.ats_compliance.violations_count === 0 
+                  <span className={`px-2 py-1 rounded text-sm font-semibold ${analysis.breakdown.ats_compliance.violations_count === 0
                       ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                       : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                  }`}>
+                    }`}>
                     {analysis.breakdown.ats_compliance.violations_count}
                   </span>
                 </div>
@@ -365,7 +397,7 @@ export default function ResultsDisplay({
           </ExpandableSection>
 
           {/* Readability (Human Scan) */}
-          <ExpandableSection 
+          <ExpandableSection
             title={`👁️ Readability (Human Scan) (${analysis.breakdown.readability.score}/10)`}
             icon={Eye}
             sectionKey="readability"
@@ -373,7 +405,7 @@ export default function ResultsDisplay({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-medium text-gray-700 dark:text-gray-300">Score</span>
-                <ScoreCircle 
+                <ScoreCircle
                   score={analysis.breakdown.readability.score}
                   label="Readable"
                   color="text-orange-600"
@@ -415,7 +447,7 @@ export default function ResultsDisplay({
           </ExpandableSection>
 
           {/* Job Match */}
-          <ExpandableSection 
+          <ExpandableSection
             title={`🎯 Job Match Likelihood (${analysis.breakdown.job_match.score}/10)`}
             icon={Target}
             sectionKey="job_match"
@@ -423,7 +455,7 @@ export default function ResultsDisplay({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-medium text-gray-700 dark:text-gray-300">Score</span>
-                <ScoreCircle 
+                <ScoreCircle
                   score={analysis.breakdown.job_match.score}
                   label="Job Match"
                   color="text-indigo-600"
@@ -457,7 +489,7 @@ export default function ResultsDisplay({
           </ExpandableSection>
 
           {/* Ghosted Risk Score */}
-          <ExpandableSection 
+          <ExpandableSection
             title={`👻 Ghosted Risk Score (${analysis.breakdown.ghosted_risk.percent}%)`}
             icon={AlertTriangle}
             sectionKey="ghosted_risk"
@@ -469,7 +501,7 @@ export default function ResultsDisplay({
                   <div className={cn(
                     "text-2xl font-bold mb-1",
                     analysis.breakdown.ghosted_risk.percent <= 30 ? "text-green-600" :
-                    analysis.breakdown.ghosted_risk.percent <= 60 ? "text-yellow-600" : "text-red-600"
+                      analysis.breakdown.ghosted_risk.percent <= 60 ? "text-yellow-600" : "text-red-600"
                   )}>
                     {analysis.breakdown.ghosted_risk.percent}%
                   </div>
@@ -504,7 +536,7 @@ export default function ResultsDisplay({
           </ExpandableSection>
 
           {/* ATS Ranking */}
-          <ExpandableSection 
+          <ExpandableSection
             title={`📊 ATS Ranking (${analysis.breakdown.ats_ranking.score}/10)`}
             icon={BarChart3}
             sectionKey="ats_ranking"
@@ -512,7 +544,7 @@ export default function ResultsDisplay({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-medium text-gray-700 dark:text-gray-300">Score</span>
-                <ScoreCircle 
+                <ScoreCircle
                   score={analysis.breakdown.ats_ranking.score}
                   label="Ranking"
                   color="text-cyan-600"
@@ -551,36 +583,47 @@ export default function ResultsDisplay({
             })
             .map((recommendation, index) => (
               <div key={index} className={cn(
-                "border-l-4 p-4 rounded-lg",
+                "border-l-4 rounded-[1.2rem]",
                 getPriorityColor(recommendation.priority)
               )}>
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0">
-                    <div className={cn(
-                      "w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold",
-                      recommendation.priority === 'high' ? 'bg-red-500' :
-                      recommendation.priority === 'medium' ? 'bg-yellow-500' : 'bg-blue-500'
-                    )}>
-                      {index + 1}
+                <LiquidGlass
+                  className="dock-glass"
+                  padding="0rem"
+                  borderRadius="1.2rem"
+                  hoverPadding="0rem"
+                  hoverBorderRadius="1.2rem"
+                  noTint={false}
+                >
+                  <div key={index} className={"p-4 rounded-[1.2rem]"}>
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-shrink-0">
+                        <div className={cn(
+                          "w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold",
+                          recommendation.priority === 'high' ? 'bg-red-500' :
+                            recommendation.priority === 'medium' ? 'bg-yellow-500' : 'bg-blue-500'
+                        )}>
+                          {index + 1}
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                          {recommendation.title}
+                        </h4>
+                        <p className="text-gray-700 dark:text-gray-300 text-sm">
+                          {recommendation.description}
+                        </p>
+                      </div>
+                      <div className={cn(
+                        "px-2 py-1 rounded text-xs font-semibold uppercase tracking-wide",
+                        recommendation.priority === 'high' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
+                          recommendation.priority === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                            'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                      )}>
+                        {recommendation.priority}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                      {recommendation.title}
-                    </h4>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm">
-                      {recommendation.description}
-                    </p>
-                  </div>
-                  <div className={cn(
-                    "px-2 py-1 rounded text-xs font-semibold uppercase tracking-wide",
-                    recommendation.priority === 'high' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
-                    recommendation.priority === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                    'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                  )}>
-                    {recommendation.priority}
-                  </div>
-                </div>
+                </LiquidGlass>
               </div>
             ))
           }
@@ -596,21 +639,22 @@ export default function ResultsDisplay({
           <p className="text-gray-600 dark:text-gray-400 text-lg">
             Get personalized resume optimization and job search strategies that actually work.
           </p>
-        <LiquidGlass 
-          className="dock-glass"
-          padding="0rem"
-          borderRadius="2.5rem"
-          hoverPadding="0.2rem"
-          hoverBorderRadius="2.5rem"
-        >
-          <button
-            onClick={() => {
-              alert('Landing Page link coming soon');
-            }}
-            className="cta-button"
+          <LiquidGlass
+            className="dock-glass"
+            padding="0rem"
+            borderRadius="2.5rem"
+            hoverPadding="0.2rem"
+            hoverBorderRadius="2.5rem"
+            noTint={false}
           >
-            Want to stop getting ignored? Click here
-          </button>
+            <button
+              onClick={() => {
+                alert('Landing Page link coming soon');
+              }}
+              className="cta-button text-center"
+            >
+              Want to stop getting ignored? Click here
+            </button>
           </LiquidGlass>
         </div>
       </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import Header from '@/components/Header';
+import LiquidGlass from '@/components/LiquidGlass';
 import LiquidGlassFilter from '@/components/LiquidGlassFilter';
 import { LoadingState } from '@/components/LoadingSpinner';
 import MinimalForm from '@/components/MinimalForm';
@@ -120,10 +121,19 @@ export default function Home() {
       </div>
       <div className="container mx-auto px-4 py-8 flex flex-col justify-center min-h-screen">
         {isUploading ? (
-          <div className="flex items-center justify-center">
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
-              <LoadingState message="Analyzing your resume with AI..." />
-            </div>
+          <div className="flex items-center justify-center max-w-max self-center">
+            <LiquidGlass
+              className="dock-glass"
+              padding="0rem"
+              borderRadius="2.5rem"
+              hoverPadding="0.2rem"
+              hoverBorderRadius="2.5rem"
+              noTint={false}
+            >
+              <div className=" rounded-2xl p-8">
+                <LoadingState message="Analyzing your resume with AI..." />
+              </div>
+            </LiquidGlass>
           </div>
         ) : analysis ? (
           <ResultsDisplay
