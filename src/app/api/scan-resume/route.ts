@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { analyzeResume } from '@/lib/openai';
-import { validateFile, generateErrorMessage } from '@/lib/utils';
+import { markAnalysisComplete, storeEmail } from '@/lib/supabase-admin';
+import { generateErrorMessage, validateFile } from '@/lib/utils';
 import { ApiResponse, ResumeAnalysisData } from '@/types';
-import { storeEmail, markAnalysisComplete } from '@/lib/supabase-admin';
 import fs from 'fs';
+import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 
 export const runtime = 'nodejs';
@@ -81,58 +81,6 @@ function getMockResponse(): ResumeAnalysisData {
   }
 }
 
-async function extractTextFromFile(file: File): Promise<string> {
-  try {
-    const fileBuffer = Buffer.from(await file.arrayBuffer());
-    const fileName = file.name || '';
-    
-    if (fileName.toLowerCase().endsWith('.pdf')) {
-      let text = '';
-      const pdfText = fileBuffer.toString('binary');
-      
-      // Simple PDF text extraction (for more complex PDFs, consider using a proper PDF library)
-      const textMatches = pdfText.match(/(?:BT\s*\/F\d+\s+\d+\s+Tf\s*)(.*?)(?:ET)/g);
-      if (textMatches) {
-        text = textMatches.join(' ').replace(/[^\x20-\x7E]/g, ' ').trim();
-      }
-      
-      if (text.length < 50) {
-        const simpleExtraction = fileBuffer
-          .toString('utf8', 0, Math.min(fileBuffer.length, 50000))
-          .replace(/[^\x20-\x7E\n\r]/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim();
-        text = simpleExtraction;
-      }
-      
-      return text.length > 50 ? text : 
-        'Resume content extracted. Please ensure your PDF contains selectable text for better analysis.';
-    } 
-    else if (fileName.toLowerCase().endsWith('.docx') || fileName.toLowerCase().endsWith('.doc')) {
-      const text = fileBuffer
-        .toString('utf8')
-        .replace(/[^\x20-\x7E\n\r]/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-        
-      return text.length > 50 ? text : 
-        'Document content extracted. File appears to be in Word format.';
-    }
-    
-    // Generic text extraction for other file types
-    const text = fileBuffer
-      .toString('utf8', 0, Math.min(fileBuffer.length, 50000))
-      .replace(/[^\x20-\x7E\n\r]/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-      
-    return text.length > 50 ? text : 'File content extracted for analysis.';
-  } catch (error) {
-    console.error('Text extraction error:', error);
-    throw new Error('Failed to extract text from file');
-  }
-}
-
 export async function POST(req: NextRequest) {
   try {
     const ip = req.headers.get('x-forwarded-for') || 
@@ -191,26 +139,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let resumeText: string;
-    try {
-      resumeText = await extractTextFromFile(file);
-    } catch (extractError) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, error: generateErrorMessage(extractError) },
-        { status: 400 }
-      );
-    }
-
-    if (!resumeText || resumeText.length < 50) {
-      return NextResponse.json<ApiResponse>(
-        { 
-          success: false, 
-          error: 'Unable to extract sufficient text from resume. Please ensure the file contains readable text.' 
-        },
-        { status: 400 }
-      );
-    }
-
     // Store email in database (non-blocking - don't fail if this doesn't work)
     try {
       await storeEmail(email, file.name);
@@ -238,39 +166,46 @@ export async function POST(req: NextRequest) {
         );
       }
     } else {
-        try {
-          analysis = await analyzeResume(resumeText);
-        } catch (aiError) {
-          console.error('OpenAI analysis error:', aiError);
-          
-          // Check if this is a configuration error
-          const errorMessage = aiError instanceof Error ? aiError.message : 'Unknown error';
-          let statusCode = 500;
-          let userMessage = 'Failed to analyze resume. Please try again later.';
+      try {
+        // Convert File to Buffer for OpenAI upload
+        const fileBuffer = Buffer.from(await file.arrayBuffer());
+        
+        // Pass the file directly to OpenAI
+        analysis = await analyzeResume(fileBuffer, file.name, file.type);
+      } catch (aiError) {
+        console.error('OpenAI analysis error:', aiError);
+        
+        // Check if this is a configuration error
+        const errorMessage = aiError instanceof Error ? aiError.message : 'Unknown error';
+        let statusCode = 500;
+        let userMessage = 'Failed to analyze resume. Please try again later.';
 
-          if (errorMessage.includes('API key') || errorMessage.includes('OPENAI_API_KEY')) {
-            statusCode = 503;
-            userMessage = 'Service configuration issue: OpenAI API key is missing or invalid. Please contact support or check your environment configuration.';
-          } else if (errorMessage.includes('Assistant ID') || errorMessage.includes('OPENAI_ASSISTANT_ID')) {
-            statusCode = 503;
-            userMessage = 'Service configuration issue: OpenAI Assistant is not properly configured. Please contact support or check your environment configuration.';
-          } else if (errorMessage.includes('rate limit') || errorMessage.includes('quota')) {
-            statusCode = 429;
-            userMessage = 'Service is currently experiencing high demand. Please try again in a few minutes.';
-          } else if (errorMessage.includes('network') || errorMessage.includes('timeout')) {
-            statusCode = 503;
-            userMessage = 'Network connectivity issue. Please check your internet connection and try again.';
-          }
-
-          return NextResponse.json<ApiResponse>(
-            { 
-              success: false, 
-              error: userMessage
-            },
-            { status: statusCode }
-          );
+        if (errorMessage.includes('API key') || errorMessage.includes('OPENAI_API_KEY')) {
+          statusCode = 503;
+          userMessage = 'Service configuration issue: OpenAI API key is missing or invalid. Please contact support or check your environment configuration.';
+        } else if (errorMessage.includes('Assistant ID') || errorMessage.includes('OPENAI_ASSISTANT_ID')) {
+          statusCode = 503;
+          userMessage = 'Service configuration issue: OpenAI Assistant is not properly configured. Please contact support or check your environment configuration.';
+        } else if (errorMessage.includes('rate limit') || errorMessage.includes('quota')) {
+          statusCode = 429;
+          userMessage = 'Service is currently experiencing high demand. Please try again in a few minutes.';
+        } else if (errorMessage.includes('network') || errorMessage.includes('timeout')) {
+          statusCode = 503;
+          userMessage = 'Network connectivity issue. Please check your internet connection and try again.';
+        } else if (errorMessage.includes('file format') || errorMessage.includes('unsupported')) {
+          statusCode = 400;
+          userMessage = 'The uploaded file format is not supported. Please upload a PDF, DOCX, or TXT file.';
         }
+
+        return NextResponse.json<ApiResponse>(
+          { 
+            success: false, 
+            error: userMessage
+          },
+          { status: statusCode }
+        );
       }
+    }
 
     // Mark analysis as complete (non-blocking)
     try {
