@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     siteName: 'Resume Scanner AI',
     images: [
       {
-        url: '/og-image.png',
+        url: '/favicon-32x32.png',
         width: 1200,
         height: 630,
         alt: 'Resume Scanner AI - AI-Powered Resume Analysis',
@@ -103,6 +103,7 @@ export default function RootLayout({
     <html lang="en" className={inter.className}>
       <head>
         <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
         <meta name="theme-color" content="#3b82f6" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </head>

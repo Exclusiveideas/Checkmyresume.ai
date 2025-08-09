@@ -8,7 +8,8 @@ import path from 'path';
 
 export const runtime = 'nodejs';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB - increased from 5MB but still reasonable
+const OPENAI_RECOMMENDED_SIZE = 2 * 1024 * 1024; // 2MB for optimal performance
 
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 
@@ -169,6 +170,14 @@ export async function POST(req: NextRequest) {
       try {
         // Convert File to Buffer for OpenAI upload
         const fileBuffer = Buffer.from(await file.arrayBuffer());
+        
+        // Log file size for debugging
+        console.log(`Processing file: ${file.name}, Size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+        
+        // Warn if file is large
+        if (file.size > OPENAI_RECOMMENDED_SIZE) {
+          console.warn(`File size (${(file.size / 1024 / 1024).toFixed(2)}MB) exceeds recommended size for optimal performance`);
+        }
         
         // Pass the file directly to OpenAI
         analysis = await analyzeResume(fileBuffer, file.name, file.type);
