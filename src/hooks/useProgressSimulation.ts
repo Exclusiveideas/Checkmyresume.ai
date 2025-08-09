@@ -7,11 +7,11 @@ interface ProgressStage {
 }
 
 const progressStages: ProgressStage[] = [
-  { percentage: 0, message: "Uploading resume...", duration: 500 },
-  { percentage: 15, message: "Extracting text from document...", duration: 1000 },
-  { percentage: 30, message: "Analyzing with AI...", duration: 2000 },
-  { percentage: 60, message: "Processing recommendations...", duration: 1000 },
-  { percentage: 85, message: "Finalizing results...", duration: 500 },
+  { percentage: 0, message: "Uploading resume...", duration: 1500 },
+  { percentage: 15, message: "Extracting text from document...", duration: 2500 },
+  { percentage: 30, message: "Analyzing with AI...", duration: 5000 },
+  { percentage: 60, message: "Processing recommendations...", duration: 2500 },
+  { percentage: 85, message: "Finalizing results...", duration: 1000 },
   { percentage: 100, message: "Analysis complete!", duration: 0 }
 ];
 
