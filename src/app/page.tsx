@@ -40,7 +40,6 @@ export default function Home() {
   const handleFileSelect = (file: File, email: string) => {
     setSelectedFile(file);
     setUserEmail(email);
-    toast.dismiss(); // Clear any previous toasts
   };
 
   const handleUpload = async (file: File) => {
