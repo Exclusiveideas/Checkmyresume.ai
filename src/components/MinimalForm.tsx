@@ -78,7 +78,7 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
+    <div className="max-w-3xl mx-auto space-y-10">
       {/* Main Form Container */}
       <div className="input-container" style={{ position: 'relative' }}>
         <LiquidGlass
@@ -125,7 +125,7 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
       )}
 
       {/* Scan Button */}
-      <div className="text-center">
+      <div className="text-center max-w-max mx-auto">
         <LiquidGlass
           className="dock-glass"
           padding="0rem"
