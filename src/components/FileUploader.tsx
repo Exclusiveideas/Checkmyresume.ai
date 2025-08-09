@@ -12,8 +12,6 @@ export default function FileUploader({
   onFileSelect,
   onUpload,
   isUploading,
-  error,
-  acceptedTypes: __,
   maxSize,
   className
 }: FileUploaderProps) {

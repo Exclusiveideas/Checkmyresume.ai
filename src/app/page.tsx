@@ -11,12 +11,17 @@ import { ApiResponse, ResumeAnalysisData } from '@/types';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [_selectedFile, setSelectedFile] = useState<File | null>(null);
   const [userEmail, setUserEmail] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
   const [analysis, setAnalysis] = useState<ResumeAnalysisData | null>(null);
   const toast = useToast();
-  const [particles, setParticles] = useState<unknown>([]);
+  const [particles, setParticles] = useState<Array<{
+    id: number;
+    left: number;
+    animationDelay: number;
+    animationDuration: number;
+  }>>([]);
 
   // Initialize particles
   useEffect(() => {
