@@ -20,6 +20,7 @@ const LiquidGlass = ({
           display: 'flex',
           flexDirection: 'row',
           width: '100%',
+          flex: 1,
           position: 'relative',
           padding: padding,
           borderRadius: borderRadius,
