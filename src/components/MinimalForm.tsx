@@ -104,7 +104,8 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
           >
             <FileUp className="w-5 h-5" />
             <span>Upload resume</span>
-          </button></LiquidGlass>
+          </button>
+        </LiquidGlass>
 
         <input
           ref={fileInputRef}

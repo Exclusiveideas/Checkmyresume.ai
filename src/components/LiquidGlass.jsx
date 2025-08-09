@@ -17,13 +17,20 @@ const LiquidGlass = ({
           '--border-radius': borderRadius,
           '--hover-padding': hoverPadding || padding,
           '--hover-border-radius': hoverBorderRadius || borderRadius,
+          display: 'flex',
+          flexDirection: 'row',
+          width: '100%',
+          position: 'relative',
+          padding: padding,
+          borderRadius: borderRadius,
+          overflow: 'hidden',
           ...style
         }}
       >
         <div className="liquid-glass-effect" />
         <div className="liquid-glass-tint" style={{ opacity: noTint ? 0 : 1 }} />
         <div className="liquid-glass-shine" />
-        <div className="liquid-glass-content">
+        <div className="liquid-glass-content" style={{ display: 'flex', width: '100%', position: 'relative', zIndex: 3 }}>
           {children}
         </div>
       </div>
