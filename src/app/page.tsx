@@ -139,7 +139,7 @@ export default function Home() {
               noTint={false}
             >
               <div className=" rounded-2xl p-8">
-                <LoadingState message="Analyzing your resume with AI..." />
+                <LoadingState />
               </div>
             </LiquidGlass>
           </div>
