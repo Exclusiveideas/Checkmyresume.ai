@@ -30,7 +30,7 @@ export default function LoadingSpinner({
   );
 }
 
-export function LoadingState({ message = "Analyzing your resume..." }: { message?: string }) {
+export function LoadingState() {
   const { progress, message, isComplete } = useProgressSimulation();
 
   return (
