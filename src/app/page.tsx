@@ -13,7 +13,6 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
-  const [_selectedFile, setSelectedFile] = useState<File | null>(null);
   const [userEmail, setUserEmail] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
   const [analysis, setAnalysis] = useState<ResumeAnalysisData | null>(null);
@@ -40,7 +39,6 @@ export default function Home() {
   }, []);
 
   const handleFileSelect = (file: File, email: string) => {
-    setSelectedFile(file);
     setUserEmail(email);
   };
 
@@ -73,7 +71,6 @@ export default function Home() {
         toast.success('Resume analysis completed successfully! 🎉');
 
         setAnalysis(result.data);
-        setSelectedFile(null);
       } else {
         throw new Error(result.error || 'Failed to analyze resume');
       }
@@ -101,7 +98,6 @@ export default function Home() {
 
   const handleReset = () => {
     setAnalysis(null);
-    setSelectedFile(null);
     setUserEmail('');
     setIsUploading(false);
     toast.dismiss(); // Clear any toasts when resetting
@@ -203,7 +199,7 @@ export default function Home() {
                 Is Your Resume Getting Ignored?
               </h2>
               <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-                Use this Instant ATS scanner to see why recruiters aren't calling you back.
+                Use this Instant ATS scanner to see why recruiters aren&apos;t calling you back.
                 Professional insights in seconds.
               </p>
             </div>
