@@ -10,25 +10,25 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Resume Scanner AI - AI-Powered Resume Analysis & ATS Optimization",
-    template: "%s | Resume Scanner AI"
+    default: "ATS Resume Scanner - See Why Your Resume Gets Ignored | 100% Free",
+    template: "%s | ATS Resume Scanner"
   },
-  description: "Upload your resume and get AI-powered insights to improve your job prospects. Advanced analysis for skills, ATS optimization, and professional presentation. Free resume scanner with instant results.",
+  description: "See why your applications are getting ignored. Use this Instant ATS scanner to understand why recruiters aren't calling you back. Professional insights in seconds. No signup required, 100% free.",
   keywords: [
+    "ATS resume scanner",
     "resume scanner",
-    "resume analysis",
     "ATS optimization",
+    "resume analysis",
+    "why resume ignored",
+    "free resume checker",
+    "instant ATS scanner",
     "AI resume review",
     "job application",
-    "career development",
-    "resume checker",
-    "skills analysis",
-    "professional resume",
     "resume improvement"
   ],
-  authors: [{ name: "Resume Scanner AI" }],
-  creator: "Resume Scanner AI",
-  publisher: "Resume Scanner AI",
+  authors: [{ name: "ATS Resume Scanner" }],
+  creator: "ATS Resume Scanner",
+  publisher: "ATS Resume Scanner",
   formatDetection: {
     email: false,
     address: false,
@@ -39,16 +39,16 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: "Resume Scanner AI - AI-Powered Resume Analysis",
-    description: "Upload your resume and get AI-powered insights to improve your job prospects. Advanced analysis for skills, ATS optimization, and professional presentation.",
+    title: "ATS Resume Scanner - See Why Your Resume Gets Ignored",
+    description: "See why your applications are getting ignored. Use this Instant ATS scanner to understand why recruiters aren't calling you back. Professional insights in seconds.",
     url: '/',
-    siteName: 'Resume Scanner AI',
+    siteName: 'ATS Resume Scanner',
     images: [
       {
         url: '/favicon-32x32.png',
         width: 1200,
         height: 630,
-        alt: 'Resume Scanner AI - AI-Powered Resume Analysis',
+        alt: 'ATS Resume Scanner - See Why Your Resume Gets Ignored',
       },
     ],
     locale: 'en_US',
@@ -56,8 +56,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Resume Scanner AI - AI-Powered Resume Analysis",
-    description: "Upload your resume and get AI-powered insights to improve your job prospects. Advanced analysis for skills, ATS optimization, and professional presentation.",
+    title: "ATS Resume Scanner - See Why Your Resume Gets Ignored",
+    description: "See why your applications are getting ignored. Use this Instant ATS scanner to understand why recruiters aren't calling you back. Professional insights in seconds.",
     images: ['/og-image.png'],
   },
   robots: {
@@ -116,8 +116,8 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebApplication",
-              "name": "Resume Scanner AI",
-              "description": "AI-powered resume analysis tool that provides insights on skills, ATS optimization, and professional presentation.",
+              "name": "ATS Resume Scanner",
+              "description": "Instant ATS scanner to see why your applications are getting ignored. Get professional insights in seconds with no signup required.",
               "url": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
               "applicationCategory": "BusinessApplication",
               "operatingSystem": "Web Browser",

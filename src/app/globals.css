@@ -269,3 +269,9 @@ body {
   cursor: not-allowed;
   transform: none;
 }
+
+.noFreeBadge {
+    background: rgba(255, 255, 255, 0.103);
+    border: 2px solid rgb(145, 145, 145);
+    border-radius: 10px;
+}

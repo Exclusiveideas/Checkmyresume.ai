@@ -649,7 +649,7 @@ export default function ResultsDisplay({
           >
             <button
               onClick={() => {
-                alert('Landing Page link coming soon');
+                window.open('http://Hackedcv.ai/moreinfo', '_blank');
               }}
               className="cta-button text-center"
             >
