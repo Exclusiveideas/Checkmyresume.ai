@@ -29,7 +29,11 @@ export default function LoadingSpinner({
   );
 }
 
-export function LoadingState() {
+interface LoadingStateProps {
+  message?: string;
+}
+
+export function LoadingState({ message = 'Loading...' }: LoadingStateProps) {
   return (
     <div className="flex flex-col items-center justify-center space-y-6 p-8">
       <div className="relative">
@@ -37,6 +41,14 @@ export function LoadingState() {
         <div className="absolute inset-0 animate-ping">
           <LoadingSpinner size="lg" color="text-purple-400" />
         </div>
+      </div>
+      <div className="text-center space-y-2">
+        <p className="text-lg font-medium text-gray-200 animate-pulse">
+          {message}
+        </p>
+        <p className="text-sm text-gray-400">
+          This may take up to 2 minutes
+        </p>
       </div>
     </div>
   );

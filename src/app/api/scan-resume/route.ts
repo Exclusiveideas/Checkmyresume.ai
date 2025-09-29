@@ -174,19 +174,10 @@ export async function POST(req: NextRequest) {
       try {
         // Convert File to Buffer for OpenAI upload
         const fileBuffer = Buffer.from(await file.arrayBuffer());
-        
-        // Log file size for debugging
-        console.log(`Processing file: ${file.name}, Size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
-        
-        // Warn if file is large
-        if (file.size > OPENAI_RECOMMENDED_SIZE) {
-          console.warn(`File size (${(file.size / 1024 / 1024).toFixed(2)}MB) exceeds recommended size for optimal performance`);
-        }
-        
+
         // Pass the file directly to OpenAI
         analysis = await analyzeResume(fileBuffer, file.name, file.type);
       } catch (aiError) {
-        console.error('OpenAI analysis error:', aiError);
         
         // Check if this is a configuration error
         const errorMessage = aiError instanceof Error ? aiError.message : 'Unknown error';

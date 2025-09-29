@@ -8,6 +8,7 @@ import Logo from '@/components/Logo';
 import MinimalForm from '@/components/MinimalForm';
 import ResultsDisplay from '@/components/ResultsDisplay';
 import { useToast } from '@/hooks/useToast';
+import { getLoadingMessage } from '@/lib/loadingMessages';
 import { ApiResponse, ResumeAnalysisData } from '@/types';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -16,6 +17,8 @@ export default function Home() {
   const [userEmail, setUserEmail] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
   const [analysis, setAnalysis] = useState<ResumeAnalysisData | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState<string>('Analyzing your resume with AI...');
+  const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
   const toast = useToast();
   const [particles, setParticles] = useState<Array<{
     id: number;
@@ -38,16 +41,36 @@ export default function Home() {
     setParticles(particleArray);
   }, []);
 
+  // Progressive loading messages
+  useEffect(() => {
+    if (!isUploading) {
+      setElapsedSeconds(0);
+      setLoadingMessage('Analyzing your resume with AI...');
+      return;
+    }
+
+    // Update message every second
+    const interval = setInterval(() => {
+      setElapsedSeconds(prev => {
+        const newElapsed = prev + 1;
+        const newMessage = getLoadingMessage(newElapsed);
+        setLoadingMessage(newMessage);
+        return newElapsed;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isUploading]);
+
   const handleFileSelect = (file: File, email: string) => {
     setUserEmail(email);
   };
 
   const handleUpload = async (file: File) => {
     setIsUploading(true);
+    setElapsedSeconds(0);
+    setLoadingMessage('Analyzing your resume with AI...');
     toast.dismiss(); // Clear any previous toasts
-
-    // Show loading toast
-    const loadingToastId = toast.loading('Analyzing your resume with AI...');
 
     try {
       const formData = new FormData();
@@ -66,19 +89,13 @@ export default function Home() {
       }
 
       if (result.success && result.data) {
-        // Dismiss loading toast and show success
-        toast.dismiss(loadingToastId);
         toast.success('Resume analysis completed successfully! 🎉');
-
         setAnalysis(result.data);
       } else {
         throw new Error(result.error || 'Failed to analyze resume');
       }
     } catch (err) {
       console.error('Upload error:', err);
-
-      // Dismiss loading toast and show error
-      toast.dismiss(loadingToastId);
 
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
 
@@ -139,7 +156,7 @@ export default function Home() {
               noTint={false}
             >
               <div className=" rounded-2xl p-8">
-                <LoadingState />
+                <LoadingState message={loadingMessage} />
               </div>
             </LiquidGlass>
           </div>

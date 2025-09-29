@@ -64,19 +64,13 @@ export async function analyzeResume(
 
   // Check file size
   const fileSize = fileBuffer.length;
-  console.log(`File size: ${(fileSize / 1024 / 1024).toFixed(2)}MB`);
-  
+
   if (fileSize > OPENAI_MAX_FILE_SIZE) {
     throw new Error(`File size (${(fileSize / 1024 / 1024).toFixed(2)}MB) exceeds OpenAI's maximum limit of 512MB`);
-  }
-  
-  if (fileSize > RECOMMENDED_MAX_SIZE) {
-    console.warn(`File size (${(fileSize / 1024 / 1024).toFixed(2)}MB) exceeds recommended size. Processing may be slow.`);
   }
 
   try {
     // Upload the file to OpenAI
-    console.log('Uploading file to OpenAI:', fileName);
     
     // Create a proper File object for OpenAI
     const file = createOpenAIFile(fileBuffer, fileName, mimeType);
@@ -89,21 +83,16 @@ export async function analyzeResume(
         purpose: 'assistants',
       });
     } catch (uploadError: unknown) {
-      console.error('File upload error:', uploadError);
-      
       // Check if it's a size issue
       const errorWithStatus = uploadError as { status?: number };
       const errorWithMessage = uploadError as Error;
       if (errorWithStatus?.status === 413 || errorWithMessage?.message?.includes('413')) {
         // If file is too large, try to extract text and send as message instead
-        console.log('File too large for direct upload, falling back to text extraction');
         return await analyzeResumeAsText(fileBuffer, fileName, openai, ASSISTANT_ID);
       }
-      
+
       throw uploadError;
     }
-
-    console.log('File uploaded successfully:', uploadedFile.id);
 
     // Create a thread with the uploaded file
     let thread;
@@ -142,12 +131,10 @@ The resume has been uploaded as a file attachment.`,
           throw new Error('Thread creation failed - no thread ID returned');
         }
 
-        console.log('Thread created successfully:', thread.id);
         break; // Success, exit retry loop
 
       } catch (threadError) {
         retryCount++;
-        console.error(`Thread creation attempt ${retryCount} failed:`, threadError);
         
         if (retryCount >= maxRetries) {
           // Clean up uploaded file before throwing
@@ -170,8 +157,6 @@ The resume has been uploaded as a file attachment.`,
       assistant_id: ASSISTANT_ID,
     });
 
-    console.log('Assistant run created:', run.id);
-
     // Poll for completion
     let runStatus = await openai.beta.threads.runs.retrieve(run.id, { thread_id: thread!.id });
 
@@ -183,18 +168,14 @@ The resume has been uploaded as a file attachment.`,
     
     while (runStatus.status === 'queued' || runStatus.status === 'in_progress') {
       if (Date.now() - startTime > maxWaitTime) {
-        console.error(`Analysis timeout after ${maxWaitTime}ms for thread ${thread!.id}, run ${run.id}`);
         // Clean up the uploaded file
         try {
           await openai.files.delete(uploadedFile.id);
         } catch (cleanupError) {
-          console.warn('Failed to delete uploaded file:', cleanupError);
+          // Silent cleanup
         }
         throw new Error('Analysis timeout - the file may be too complex or large');
       }
-
-      const elapsed = Date.now() - startTime;
-      console.log(`Polling run status: ${runStatus.status} (elapsed: ${(elapsed / 1000).toFixed(1)}s / ${(maxWaitTime / 1000).toFixed(0)}s)`);
 
       // Poll every 2 seconds instead of 1 to reduce API calls
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -202,55 +183,48 @@ The resume has been uploaded as a file attachment.`,
     }
 
     if (runStatus.status === 'completed') {
-      console.log(`Analysis completed successfully for thread ${thread!.id}`);
       const messages = await openai.beta.threads.messages.list(thread!.id);
       const response = messages.data[0];
-      
+
       if (response.content[0].type === 'text') {
         const content = response.content[0].text.value;
-        console.log(`Received response length: ${content.length} characters`);
-        
+
         try {
           // Extract JSON from the response
           const jsonMatch = content.match(/\{[\s\S]*\}/);
           if (!jsonMatch) {
-            console.error('No JSON found in OpenAI response:', content.substring(0, 500));
             throw new Error('No JSON found in response');
           }
-          
+
           const analysis = JSON.parse(jsonMatch[0]) as ResumeAnalysisData;
-          console.log('Successfully parsed analysis data');
-          
+
           // Clean up the uploaded file
           try {
             await openai.files.delete(uploadedFile.id);
-            console.log('File deleted successfully:', uploadedFile.id);
           } catch (cleanupError) {
-            console.warn('Failed to delete uploaded file:', cleanupError);
+            // Silent cleanup
           }
-          
+
           return analysis;
         } catch (parseError) {
           // Clean up the uploaded file even on parse error
           try {
             await openai.files.delete(uploadedFile.id);
           } catch (cleanupError) {
-            console.warn('Failed to delete uploaded file:', cleanupError);
+            // Silent cleanup
           }
-          
-          console.error('Failed to parse OpenAI response:', parseError);
+
           throw new Error('Failed to parse resume analysis');
         }
       }
     } else if (runStatus.status === 'failed') {
       const errorMessage = runStatus.last_error?.message || 'Unknown error';
-      console.error(`Assistant run failed for thread ${thread!.id}:`, errorMessage);
       
       // Clean up the uploaded file
       try {
         await openai.files.delete(uploadedFile.id);
       } catch (cleanupError) {
-        console.warn('Failed to delete uploaded file:', cleanupError);
+        // Silent cleanup
       }
       
       // Provide more specific error messages
@@ -264,7 +238,7 @@ The resume has been uploaded as a file attachment.`,
       try {
         await openai.files.delete(uploadedFile.id);
       } catch (cleanupError) {
-        console.warn('Failed to delete uploaded file:', cleanupError);
+        // Silent cleanup
       }
       
       throw new Error('Analysis was cancelled');
@@ -273,7 +247,7 @@ The resume has been uploaded as a file attachment.`,
       try {
         await openai.files.delete(uploadedFile.id);
       } catch (cleanupError) {
-        console.warn('Failed to delete uploaded file:', cleanupError);
+        // Silent cleanup
       }
       
       throw new Error('Analysis expired - please try again');
@@ -289,8 +263,6 @@ The resume has been uploaded as a file attachment.`,
     throw new Error('Failed to get response from assistant');
     
   } catch (error) {
-    console.error('OpenAI analysis error:', error);
-    
     if (error instanceof Error) {
       // Check for specific OpenAI error types
       if (error.message.includes('file_not_found')) {
@@ -352,14 +324,11 @@ async function analyzeResumeAsText(
     const MAX_TEXT_LENGTH = 30000; // Approximately 7500 tokens
     if (resumeText.length > MAX_TEXT_LENGTH) {
       resumeText = resumeText.substring(0, MAX_TEXT_LENGTH) + '... [truncated]';
-      console.warn('Resume text truncated due to length');
     }
 
     if (!resumeText || resumeText.length < 50) {
       throw new Error('Unable to extract sufficient text from the file. Please ensure it contains readable text.');
     }
-
-    console.log('Extracted text length:', resumeText.length);
 
     // Create a thread and analyze the text
     let thread;
@@ -375,12 +344,10 @@ async function analyzeResumeAsText(
           throw new Error('Thread creation failed - no thread ID returned');
         }
 
-        console.log('Thread created successfully for text analysis:', thread.id);
         break; // Success, exit retry loop
 
       } catch (threadError) {
         retryCount++;
-        console.error(`Thread creation attempt ${retryCount} failed:`, threadError);
         
         if (retryCount >= maxRetries) {
           throw new Error(`Failed to create thread after ${maxRetries} attempts: ${threadError instanceof Error ? threadError.message : 'Unknown error'}`);
@@ -412,8 +379,6 @@ ${resumeText}`,
       assistant_id: ASSISTANT_ID,
     });
 
-    console.log('Assistant run created for text analysis:', run.id);
-
     // Poll for completion
     let runStatus = await openai.beta.threads.runs.retrieve(run.id, { thread_id: thread!.id });
 
@@ -427,9 +392,6 @@ ${resumeText}`,
       if (Date.now() - startTime > maxWaitTime) {
         throw new Error('Analysis timeout - please try again');
       }
-
-      const elapsed = Date.now() - startTime;
-      console.log(`Text analysis polling: ${runStatus.status} (elapsed: ${(elapsed / 1000).toFixed(1)}s / ${(maxWaitTime / 1000).toFixed(0)}s)`);
 
       // Poll every 2 seconds instead of 1 to reduce API calls
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -452,7 +414,6 @@ ${resumeText}`,
           const analysis = JSON.parse(jsonMatch[0]) as ResumeAnalysisData;
           return analysis;
         } catch (parseError) {
-          console.error('Failed to parse OpenAI response:', parseError);
           throw new Error('Failed to parse resume analysis');
         }
       }
@@ -460,7 +421,6 @@ ${resumeText}`,
 
     throw new Error(`Analysis failed: ${runStatus.last_error?.message || 'Unknown error'}`);
   } catch (error) {
-    console.error('Text analysis error:', error);
     throw error;
   }
 }
