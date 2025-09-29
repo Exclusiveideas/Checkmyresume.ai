@@ -7,6 +7,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 
 export const runtime = 'nodejs';
+// Set maximum duration for this API route (in seconds)
+// Note: Vercel has limits based on plan (Hobby: 10s, Pro: 60s, Enterprise: 900s)
+// For local/self-hosted deployments, this can be higher
+export const maxDuration = 120; // 2 minutes
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB - increased from 5MB but still reasonable
 const OPENAI_RECOMMENDED_SIZE = 2 * 1024 * 1024; // 2MB for optimal performance

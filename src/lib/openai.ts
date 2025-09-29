@@ -174,8 +174,11 @@ The resume has been uploaded as a file attachment.`,
 
     // Poll for completion
     let runStatus = await openai.beta.threads.runs.retrieve(run.id, { thread_id: thread!.id });
-    
-    const maxWaitTime = 60000; // 60 seconds max wait
+
+    // Use environment variable or default to 120 seconds (2 minutes)
+    const maxWaitTime = process.env.OPENAI_ANALYSIS_TIMEOUT
+      ? parseInt(process.env.OPENAI_ANALYSIS_TIMEOUT, 10)
+      : 120000; // 120 seconds max wait
     const startTime = Date.now();
     
     while (runStatus.status === 'queued' || runStatus.status === 'in_progress') {
@@ -189,9 +192,12 @@ The resume has been uploaded as a file attachment.`,
         }
         throw new Error('Analysis timeout - the file may be too complex or large');
       }
-      
-      console.log(`Polling run status: ${runStatus.status} (elapsed: ${Date.now() - startTime}ms)`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const elapsed = Date.now() - startTime;
+      console.log(`Polling run status: ${runStatus.status} (elapsed: ${(elapsed / 1000).toFixed(1)}s / ${(maxWaitTime / 1000).toFixed(0)}s)`);
+
+      // Poll every 2 seconds instead of 1 to reduce API calls
+      await new Promise(resolve => setTimeout(resolve, 2000));
       runStatus = await openai.beta.threads.runs.retrieve(run.id, { thread_id: thread!.id });
     }
 
@@ -410,15 +416,23 @@ ${resumeText}`,
 
     // Poll for completion
     let runStatus = await openai.beta.threads.runs.retrieve(run.id, { thread_id: thread!.id });
-    const maxWaitTime = 60000; // 60 seconds
+
+    // Use environment variable or default to 120 seconds (2 minutes)
+    const maxWaitTime = process.env.OPENAI_ANALYSIS_TIMEOUT
+      ? parseInt(process.env.OPENAI_ANALYSIS_TIMEOUT, 10)
+      : 120000; // 120 seconds max wait
     const startTime = Date.now();
-    
+
     while (runStatus.status === 'queued' || runStatus.status === 'in_progress') {
       if (Date.now() - startTime > maxWaitTime) {
         throw new Error('Analysis timeout - please try again');
       }
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const elapsed = Date.now() - startTime;
+      console.log(`Text analysis polling: ${runStatus.status} (elapsed: ${(elapsed / 1000).toFixed(1)}s / ${(maxWaitTime / 1000).toFixed(0)}s)`);
+
+      // Poll every 2 seconds instead of 1 to reduce API calls
+      await new Promise(resolve => setTimeout(resolve, 2000));
       runStatus = await openai.beta.threads.runs.retrieve(run.id, { thread_id: thread!.id });
     }
 

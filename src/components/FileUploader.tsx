@@ -149,9 +149,8 @@ export default function FileUploader({
             )}
           >
             {isUploading ? (
-              <div className="flex items-center justify-center space-x-2">
+              <div className="flex items-center justify-center">
                 <LoadingSpinner size="sm" color="text-white" />
-                <span>Analyzing Resume...</span>
               </div>
             ) : (
               <div className="flex items-center justify-center space-x-2">

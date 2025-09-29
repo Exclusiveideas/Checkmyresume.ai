@@ -208,6 +208,46 @@ export default function ResultsDisplay({
                   </p>
                 )}
               </div>
+
+              {/* Score Breakdown */}
+              <div className="mt-6 bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-center">Score Breakdown</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                  <div className="text-center p-2">
+                    <div className="font-medium text-gray-700 dark:text-gray-300">Keywords</div>
+                    <div className="text-gray-600 dark:text-gray-400">{(analysis.overall.weights_applied.keyword_coverage * 100)}%</div>
+                  </div>
+                  <div className="text-center p-2">
+                    <div className="font-medium text-gray-700 dark:text-gray-300">ATS</div>
+                    <div className="text-gray-600 dark:text-gray-400">{(analysis.overall.weights_applied.ats_compliance * 100)}%</div>
+                  </div>
+                  <div className="text-center p-2">
+                    <div className="font-medium text-gray-700 dark:text-gray-300">Job Match</div>
+                    <div className="text-gray-600 dark:text-gray-400">{(analysis.overall.weights_applied.job_match * 100)}%</div>
+                  </div>
+                  <div className="text-center p-2">
+                    <div className="font-medium text-gray-700 dark:text-gray-300">Structure</div>
+                    <div className="text-gray-600 dark:text-gray-400">{(analysis.overall.weights_applied.organization_structure * 100)}%</div>
+                  </div>
+                  <div className="text-center p-2">
+                    <div className="font-medium text-gray-700 dark:text-gray-300">Ranking</div>
+                    <div className="text-gray-600 dark:text-gray-400">{(analysis.overall.weights_applied.ats_ranking * 100)}%</div>
+                  </div>
+                  <div className="text-center p-2">
+                    <div className="font-medium text-gray-700 dark:text-gray-300">Readability</div>
+                    <div className="text-gray-600 dark:text-gray-400">{(analysis.overall.weights_applied.readability * 100)}%</div>
+                  </div>
+                  <div className="text-center p-2">
+                    <div className="font-medium text-gray-700 dark:text-gray-300">Ghost Risk</div>
+                    <div className="text-gray-600 dark:text-gray-400">{(analysis.overall.weights_applied.ghosted_risk * 100)}%</div>
+                  </div>
+                  {analysis.overall.cold_traffic_cap_applied && (
+                    <div className="col-span-1 text-center p-2 bg-orange-50 dark:bg-orange-900/20 rounded">
+                      <div className="text-orange-700 dark:text-orange-300 text-xs font-medium">Score Capped</div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-wrap justify-center gap-4">
@@ -223,6 +263,76 @@ export default function ResultsDisplay({
         </LiquidGlass>
       </div>
 
+      {/* Flags */}
+      {(analysis.flags.cold_traffic_floor_applied || analysis.flags.hackedcv_detected) && (
+        <div className="rounded-[1.6rem] border border-purple-200 dark:border-purple-800">
+          <LiquidGlass
+            className="dock-glass"
+            padding="0rem"
+            borderRadius="1.6rem"
+            hoverPadding="0rem"
+            hoverBorderRadius="1.6rem"
+            noTint={true}
+          >
+            <div className="text-center w-[100%] space-y-4 p-6 rounded-3xl dark:bg-purple-800/5">
+              <div className="flex items-center justify-center space-x-2">
+                <Bot className="w-6 h-6 text-purple-600" />
+                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                  Analysis Flags
+                </h3>
+              </div>
+              <div className="flex flex-wrap justify-center gap-4">
+                {analysis.flags.cold_traffic_floor_applied && (
+                  <div className="flex items-center space-x-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg px-4 py-2">
+                    <AlertTriangle className="w-4 h-4 text-yellow-600" />
+                    <span className="text-sm font-medium text-yellow-700 dark:text-yellow-300">
+                      Score Floor Applied
+                    </span>
+                  </div>
+                )}
+                {analysis.flags.hackedcv_detected && (
+                  <div className="flex items-center space-x-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg px-4 py-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                      HackedCV Optimization Detected
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </LiquidGlass>
+        </div>
+      )}
+
+      {/* Call to Action */}
+      <div className="text-center py-12">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Ready to Land Your Dream Job?
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 text-lg">
+            Get personalized resume optimization and job search strategies that actually work.
+          </p>
+          <LiquidGlass
+            className="dock-glass"
+            padding="0rem"
+            borderRadius="2.5rem"
+            hoverPadding="0.2rem"
+            hoverBorderRadius="2.5rem"
+            noTint={false}
+          >
+            <button
+              onClick={() => {
+                window.open('http://Hackedcv.ai/moreinfo', '_blank');
+              }}
+              className="cta-button text-center"
+            >
+              Want to stop getting ignored? Click here
+            </button>
+          </LiquidGlass>
+        </div>
+      </div>
+
       {/* What This Means */}
       {analysis.what_this_means && (
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-[1.6rem]">
@@ -234,7 +344,7 @@ export default function ResultsDisplay({
             hoverBorderRadius="1.6rem"
             noTint={false}
           >
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-[1.6rem] p-6">
+            <div className="bg-blue-50 dark:bg-blue-900/20 w-full rounded-[1.6rem] p-6">
               <div className="flex items-start space-x-3">
                 <Eye className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
                 <div>
@@ -250,6 +360,64 @@ export default function ResultsDisplay({
           </LiquidGlass>
         </div>
       )}
+
+      {/* Analysis Inputs */}
+      <div className="bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-700 rounded-[1.6rem]">
+        <LiquidGlass
+          className="dock-glass"
+          padding="0rem"
+          borderRadius="1.6rem"
+          hoverPadding="0rem"
+          hoverBorderRadius="1.6rem"
+          noTint={false}
+        >
+          <div className="bg-gray-50 dark:bg-gray-900/20 w-full rounded-[1.6rem] p-6">
+            <div className="flex items-start space-x-3">
+              <FileText className="w-6 h-6 text-gray-600 flex-shrink-0 mt-1" />
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                  Analysis Details
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                  {analysis.inputs.target_title && (
+                    <div>
+                      <span className="font-medium text-gray-600 dark:text-gray-400">Target Role:</span>
+                      <span className="ml-2 text-gray-900 dark:text-gray-100">{analysis.inputs.target_title}</span>
+                    </div>
+                  )}
+                  <div>
+                    <span className="font-medium text-gray-600 dark:text-gray-400">Keywords Source:</span>
+                    <span className="ml-2 text-gray-900 dark:text-gray-100 capitalize">{analysis.inputs.keyword_source}</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600 dark:text-gray-400">Keywords Analyzed:</span>
+                    <span className="ml-2 text-gray-900 dark:text-gray-100">{analysis.inputs.industry_keywords_considered.length}</span>
+                  </div>
+                  {analysis.inputs.file_format && (
+                    <div>
+                      <span className="font-medium text-gray-600 dark:text-gray-400">File Format:</span>
+                      <span className="ml-2 text-gray-900 dark:text-gray-100 uppercase">{analysis.inputs.file_format}</span>
+                    </div>
+                  )}
+                  {analysis.inputs.job_descriptions.length > 0 && (
+                    <div className="md:col-span-2">
+                      <span className="font-medium text-gray-600 dark:text-gray-400">Job Descriptions Analyzed:</span>
+                      <span className="ml-2 text-gray-900 dark:text-gray-100">{analysis.inputs.job_descriptions.length}</span>
+                    </div>
+                  )}
+                </div>
+                {analysis.inputs.inference_notes && (
+                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                      <strong>Note:</strong> {analysis.inputs.inference_notes}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </LiquidGlass>
+      </div>
 
       {/* Detailed Breakdown */}
       <div>
@@ -305,6 +473,26 @@ export default function ResultsDisplay({
                   </div>
                 )}
               </div>
+              {analysis.breakdown.keyword_coverage.evidence && analysis.breakdown.keyword_coverage.evidence.length > 0 && (
+                <div>
+                  <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">📝 Evidence</h4>
+                  <ul className="list-disc list-inside space-y-1">
+                    {analysis.breakdown.keyword_coverage.evidence.map((item, index) => (
+                      <li key={index} className="text-sm text-gray-600 dark:text-gray-400">{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {analysis.breakdown.keyword_coverage.hackedcv_auto_10_applied && (
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                      HackedCV optimization detected - Auto score boost applied
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </ExpandableSection>
 
@@ -344,6 +532,16 @@ export default function ResultsDisplay({
                   </div>
                 ))}
               </div>
+              {analysis.breakdown.organization_structure.evidence && analysis.breakdown.organization_structure.evidence.length > 0 && (
+                <div>
+                  <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">📝 Evidence</h4>
+                  <ul className="list-disc list-inside space-y-1">
+                    {analysis.breakdown.organization_structure.evidence.map((item, index) => (
+                      <li key={index} className="text-sm text-gray-600 dark:text-gray-400">{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </ExpandableSection>
 
@@ -389,6 +587,16 @@ export default function ResultsDisplay({
                           <span className="capitalize">{violation.replace(/_/g, ' ')}</span>
                         </div>
                       ))}
+                    </div>
+                  </div>
+                )}
+                {analysis.breakdown.ats_compliance.backend_keyword_injection_detected && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle className="w-5 h-5 text-blue-600" />
+                      <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                        Backend keyword injection detected - Additional ATS optimization found
+                      </span>
                     </div>
                   </div>
                 )}
@@ -442,7 +650,32 @@ export default function ResultsDisplay({
                     </span>
                   </div>
                 </div>
+                {analysis.breakdown.readability.avg_bullet_line_length_lt_2 !== null && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Bullet Line Length</span>
+                    <div className="flex items-center space-x-2">
+                      {analysis.breakdown.readability.avg_bullet_line_length_lt_2 ? (
+                        <CheckCircle className="w-5 h-5 text-green-500" />
+                      ) : (
+                        <XCircle className="w-5 h-5 text-yellow-500" />
+                      )}
+                      <span className="text-sm">
+                        {analysis.breakdown.readability.avg_bullet_line_length_lt_2 ? 'Good (< 2 lines)' : 'Too Long (≥ 2 lines)'}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
+              {analysis.breakdown.readability.evidence && analysis.breakdown.readability.evidence.length > 0 && (
+                <div>
+                  <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">📝 Evidence</h4>
+                  <ul className="list-disc list-inside space-y-1">
+                    {analysis.breakdown.readability.evidence.map((item, index) => (
+                      <li key={index} className="text-sm text-gray-600 dark:text-gray-400">{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </ExpandableSection>
 
@@ -485,6 +718,16 @@ export default function ResultsDisplay({
                   ))}
                 </div>
               </div>
+              {analysis.breakdown.job_match.evidence && analysis.breakdown.job_match.evidence.length > 0 && (
+                <div>
+                  <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">📝 Evidence</h4>
+                  <ul className="list-disc list-inside space-y-1">
+                    {analysis.breakdown.job_match.evidence.map((item, index) => (
+                      <li key={index} className="text-sm text-gray-600 dark:text-gray-400">{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </ExpandableSection>
 
@@ -627,35 +870,6 @@ export default function ResultsDisplay({
               </div>
             ))
           }
-        </div>
-      </div>
-
-      {/* Call to Action */}
-      <div className="text-center py-12">
-        <div className="max-w-2xl mx-auto space-y-6">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Ready to Land Your Dream Job?
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
-            Get personalized resume optimization and job search strategies that actually work.
-          </p>
-          <LiquidGlass
-            className="dock-glass"
-            padding="0rem"
-            borderRadius="2.5rem"
-            hoverPadding="0.2rem"
-            hoverBorderRadius="2.5rem"
-            noTint={false}
-          >
-            <button
-              onClick={() => {
-                window.open('http://Hackedcv.ai/moreinfo', '_blank');
-              }}
-              className="cta-button text-center"
-            >
-              Want to stop getting ignored? Click here
-            </button>
-          </LiquidGlass>
         </div>
       </div>
     </div>
