@@ -4,13 +4,15 @@ export interface LoadingMessage {
 }
 
 export const LOADING_MESSAGES: LoadingMessage[] = [
-  { message: 'Analyzing your resume with AI...', timestamp: 0 },
-  { message: 'Reading through your experience...', timestamp: 15 },
-  { message: 'Checking ATS compatibility...', timestamp: 30 },
-  { message: 'Evaluating keyword coverage...', timestamp: 45 },
-  { message: 'Almost done, finalizing analysis...', timestamp: 60 },
-  { message: 'Just a few more seconds...', timestamp: 75 },
-  { message: 'Wrapping up the final details...', timestamp: 90 },
+  { message: "Analyzing your resume with AI...", timestamp: 0 },
+  { message: "Reading through your experience...", timestamp: 15 },
+  { message: "Checking ATS compatibility...", timestamp: 30 },
+  { message: "Evaluating keyword coverage...", timestamp: 45 },
+  { message: "Analyzing formatting and structure...", timestamp: 60 },
+  { message: "Calculating your job match score...", timestamp: 75 },
+  { message: "Almost done, finalizing analysis...", timestamp: 90 },
+  { message: "Just a few more seconds...", timestamp: 105 },
+  { message: "Wrapping up the final details...", timestamp: 115 },
 ];
 
 /**
@@ -37,5 +39,5 @@ export function getLoadingMessage(elapsedSeconds: number): string {
  * Get all loading messages for reference
  */
 export function getAllMessages(): string[] {
-  return LOADING_MESSAGES.map(m => m.message);
+  return LOADING_MESSAGES.map((m) => m.message);
 }
