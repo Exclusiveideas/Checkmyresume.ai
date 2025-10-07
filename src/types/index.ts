@@ -1,3 +1,52 @@
+// New simplified schema for ResumeLiteResult (v3.0.0)
+export interface ResumeLiteResult {
+  name: string;
+  strict: boolean;
+  schema: {
+    type: string;
+    properties: {
+      schema_version: string;
+      generated_at: string;
+      overall: {
+        score_0_to_100: number;
+        label: "Low Performance" | "Medium Performance" | "High Performance";
+        summary: string | null;
+      };
+      breakdown: {
+        keyword_coverage: number | null;
+        ats_compliance: number | null;
+        job_match: number | null;
+        structure: number | null;
+        ranking: number | null;
+        readability: number | null;
+        ghosted_risk_subscore_0_to_10: number | null;
+      };
+    };
+  };
+}
+
+// Simplified interface for the actual response data we'll work with
+export interface ResumeLiteResultData {
+  schema_version: string;
+  generated_at: string;
+  overall: {
+    score_0_to_100: number;
+    label: "Low Performance" | "Medium Performance" | "High Performance";
+    summary: string | null;
+  };
+  breakdown: {
+    keyword_coverage: number | null;
+    ats_compliance: number | null;
+    job_match: number | null;
+    structure: number | null;
+    ranking: number | null;
+    readability: number | null;
+    ghosted_risk_subscore_0_to_10: number | null;
+  };
+}
+
+// Backward compatibility - keep old types but mark as deprecated
+/** @deprecated Use ResumeLiteResultData instead */
 export interface ResumeAnalysis {
   name: string;
   strict: boolean;
@@ -8,14 +57,14 @@ export interface ResumeAnalysis {
       generated_at: string;
       inputs: {
         resume_text_hash: string | null;
-        file_format: 'pdf' | 'docx' | 'txt' | null;
+        file_format: "pdf" | "docx" | "txt" | null;
         target_title: string | null;
         job_descriptions: Array<{
           title: string;
           company: string | null;
           description: string;
         }>;
-        keyword_source: 'provided' | 'inferred';
+        keyword_source: "provided" | "inferred";
         industry_keywords_considered: string[];
         inference_notes: string | null;
       };
@@ -53,7 +102,14 @@ export interface ResumeAnalysis {
         ats_compliance: {
           score: number;
           violations_count: number;
-          violations: Array<'non_acceptable_format' | 'text_boxes_or_tables_detected' | 'columns_detected' | 'backend_xml_keywords_missing' | 'non_symbol_bullets' | 'hidden_headers_or_footers'>;
+          violations: Array<
+            | "non_acceptable_format"
+            | "text_boxes_or_tables_detected"
+            | "columns_detected"
+            | "backend_xml_keywords_missing"
+            | "non_symbol_bullets"
+            | "hidden_headers_or_footers"
+          >;
           backend_keyword_injection_detected: boolean;
           rationale: string | null;
         };
@@ -79,7 +135,7 @@ export interface ResumeAnalysis {
         };
         ats_ranking: {
           score: number;
-          label: 'Low' | 'Medium' | 'High';
+          label: "Low" | "Medium" | "High";
           rationale: string | null;
         };
         ghosted_risk: {
@@ -109,13 +165,13 @@ export interface ResumeAnalysis {
           ghosted_risk: 0.05;
         };
         cold_traffic_cap_applied: boolean;
-        final_label: 'Low' | 'Medium' | 'High';
+        final_label: "Low" | "Medium" | "High";
         rationale: string | null;
       };
       recommendations: Array<{
         title: string;
         description: string;
-        priority: 'high' | 'medium' | 'low';
+        priority: "high" | "medium" | "low";
       }>;
       what_this_means: string | null;
       debug: {
@@ -128,20 +184,20 @@ export interface ResumeAnalysis {
   };
 }
 
-// Simplified interface for the actual response data we'll work with
+/** @deprecated Use ResumeLiteResultData instead */
 export interface ResumeAnalysisData {
   schema_version: string;
   generated_at: string;
   inputs: {
     resume_text_hash: string | null;
-    file_format: 'pdf' | 'docx' | 'txt' | null;
+    file_format: "pdf" | "docx" | "txt" | null;
     target_title: string | null;
     job_descriptions: Array<{
       title: string;
       company: string | null;
       description: string;
     }>;
-    keyword_source: 'provided' | 'inferred';
+    keyword_source: "provided" | "inferred";
     industry_keywords_considered: string[];
     inference_notes: string | null;
   };
@@ -179,7 +235,14 @@ export interface ResumeAnalysisData {
     ats_compliance: {
       score: number;
       violations_count: number;
-      violations: Array<'non_acceptable_format' | 'text_boxes_or_tables_detected' | 'columns_detected' | 'backend_xml_keywords_missing' | 'non_symbol_bullets' | 'hidden_headers_or_footers'>;
+      violations: Array<
+        | "non_acceptable_format"
+        | "text_boxes_or_tables_detected"
+        | "columns_detected"
+        | "backend_xml_keywords_missing"
+        | "non_symbol_bullets"
+        | "hidden_headers_or_footers"
+      >;
       backend_keyword_injection_detected: boolean;
       rationale: string | null;
     };
@@ -205,7 +268,7 @@ export interface ResumeAnalysisData {
     };
     ats_ranking: {
       score: number;
-      label: 'Low' | 'Medium' | 'High';
+      label: "Low" | "Medium" | "High";
       rationale: string | null;
     };
     ghosted_risk: {
@@ -235,13 +298,13 @@ export interface ResumeAnalysisData {
       ghosted_risk: 0.05;
     };
     cold_traffic_cap_applied: boolean;
-    final_label: 'Low' | 'Medium' | 'High';
+    final_label: "Low" | "Medium" | "High";
     rationale: string | null;
   };
   recommendations: Array<{
     title: string;
     description: string;
-    priority: 'high' | 'medium' | 'low';
+    priority: "high" | "medium" | "low";
   }>;
   what_this_means: string | null;
   debug: {
@@ -254,7 +317,7 @@ export interface ResumeAnalysisData {
 
 export interface ApiResponse {
   success: boolean;
-  data?: ResumeAnalysisData;
+  data?: ResumeLiteResultData;
   error?: string;
   message?: string;
 }
@@ -273,12 +336,12 @@ export interface ValidationError {
 
 export interface UploadResponse {
   success: boolean;
-  analysis?: ResumeAnalysisData;
+  analysis?: ResumeLiteResultData;
   error?: string;
   validationErrors?: ValidationError[];
 }
 
-export type FileType = 'pdf' | 'docx' | 'doc';
+export type FileType = "pdf" | "docx" | "doc";
 
 export interface FileValidation {
   isValid: boolean;
@@ -293,7 +356,7 @@ export interface ComponentProps {
 }
 
 export interface LoadingSpinnerProps extends ComponentProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   color?: string;
 }
 
@@ -307,7 +370,7 @@ export interface FileUploaderProps extends ComponentProps {
 }
 
 export interface ResultsDisplayProps extends ComponentProps {
-  analysis: ResumeAnalysisData;
+  analysis: ResumeLiteResultData;
   onReset: () => void;
 }
 
