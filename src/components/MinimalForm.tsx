@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import LiquidGlass from '@/components/LiquidGlass';
-import { useToast } from '@/hooks/useToast';
-import { isValidEmail, validateFile } from '@/lib/utils';
-import { FileUp } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
-import './minimalForm.css';
+import LiquidGlass from "@/components/LiquidGlass";
+import { useToast } from "@/hooks/useToast";
+import { isValidEmail, validateFile } from "@/lib/utils";
+import { FileUp } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import "./minimalForm.css";
 
 interface MinimalFormProps {
   onFileSelect: (file: File, email: string) => void;
@@ -14,8 +14,13 @@ interface MinimalFormProps {
   maxSize: number;
 }
 
-export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSize }: MinimalFormProps) {
-  const [email, setEmail] = useState('');
+export default function MinimalForm({
+  onFileSelect,
+  onUpload,
+  isUploading,
+  maxSize,
+}: MinimalFormProps) {
+  const [email, setEmail] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
@@ -33,7 +38,7 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
       const validation = validateFile(file, maxSize);
 
       if (!validation.isValid) {
-        toast.error(validation.errors.join(', '));
+        toast.error(validation.errors.join(", "));
         return;
       }
 
@@ -53,17 +58,17 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
 
   const handleScan = async () => {
     if (!email.trim()) {
-      toast.error('Please enter your email address');
+      toast.error("Please enter your email address");
       return;
     }
 
     if (!isValidEmail(email)) {
-      toast.error('Please enter a valid email address');
+      toast.error("Please enter a valid email address");
       return;
     }
 
     if (!selectedFile) {
-      toast.error('Please select a resume file first');
+      toast.error("Please select a resume file first");
       return;
     }
 
@@ -73,14 +78,21 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
     try {
       await onUpload(selectedFile);
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error("Upload error:", error);
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleScan();
     }
   };
 
   return (
     <div className="max-w-3xl mx-auto space-y-10">
       {/* Main Form Container */}
-      <div className="input-container" style={{ position: 'relative' }}>
+      <div className="input-container" style={{ position: "relative" }}>
         <LiquidGlass
           className="dock-glass"
           padding="0rem"
@@ -94,6 +106,7 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
             placeholder="Enter your email..."
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="email-input"
             disabled={isUploading}
           />
@@ -120,7 +133,8 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
       {selectedFile && (
         <div className="text-center">
           <p className="text-white/70 text-sm">
-            Selected: <span className="text-white font-medium">{selectedFile.name}</span>
+            Selected:{" "}
+            <span className="text-white font-medium">{selectedFile.name}</span>
           </p>
         </div>
       )}
@@ -137,10 +151,15 @@ export default function MinimalForm({ onFileSelect, onUpload, isUploading, maxSi
         >
           <button
             onClick={handleScan}
-            disabled={isUploading || !selectedFile || !email.trim() || !isValidEmail(email)}
+            disabled={
+              isUploading ||
+              !selectedFile ||
+              !email.trim() ||
+              !isValidEmail(email)
+            }
             className="scan-button"
           >
-            {isUploading ? 'Scanning...' : 'Scan'}
+            {isUploading ? "Scanning..." : "Scan"}
           </button>
         </LiquidGlass>
       </div>
