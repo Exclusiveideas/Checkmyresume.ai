@@ -180,7 +180,7 @@ export default function ResultsDisplay({
             hoverBorderRadius="1.6rem"
             noTint={false}
           >
-            <div className="p-8 rounded-[1.6rem] dark:bg-gray-800/20">
+            <div className="p-8 w-full rounded-[1.6rem] dark:bg-gray-800/20">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {(
                   Object.keys(analysis.breakdown) as Array<
